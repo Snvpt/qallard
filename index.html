@@ -1,0 +1,1814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quinn Allard — Visual Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #080808;
+      --surface:   #111111;
+      --border:    rgba(255,255,255,0.07);
+      --text:      #e8e2d9;
+      --muted:     #6b6560;
+      --accent:    #c8a96e;
+      --accent-dim:#8a6f3e;
+      --white:     #f5f0e8;
+      --radius:    2.5rem;
+      --ease-out:  cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── Grain overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      background-size: 200px;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.35;
+    }
+
+    /* ── Typography ── */
+    .serif { font-family: 'Playfair Display', serif; }
+    h1, h2, h3 { font-family: 'Playfair Display', serif; font-weight: 400; }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 3rem;
+      mix-blend-mode: normal;
+    }
+
+    nav::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(8,8,8,0.9) 0%, transparent 100%);
+      backdrop-filter: blur(0px);
+      pointer-events: none;
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      letter-spacing: 0.08em;
+      color: var(--white);
+      text-decoration: none;
+      position: relative;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+      position: relative;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover { color: var(--white); }
+
+    .nav-cta {
+      position: relative;
+      border: 1px solid var(--border);
+      padding: 0.55rem 1.4rem;
+      border-radius: 100px;
+      color: var(--accent) !important;
+      transition: border-color 0.3s, background 0.3s !important;
+    }
+
+    .nav-cta:hover {
+      border-color: var(--accent) !important;
+      background: rgba(200,169,110,0.08) !important;
+    }
+
+    /* ── Hero scroll-scrub ── */
+    .hero-track {
+      position: relative;
+      height: 140dvh;
+    }
+
+    .hero-sticky {
+      position: sticky;
+      top: 0;
+      height: 100dvh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+    }
+
+    /* Full-bleed video background */
+    .hero-video-wrap {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      background: #000;
+    }
+
+    #heroCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: brightness(0.72) saturate(0.9);
+    }
+
+    #heroVideoSrc {
+      position: absolute;
+      width: 1px; height: 1px;
+      opacity: 0;
+      pointer-events: none;
+      top: 0; left: 0;
+    }
+
+    /* Loading overlay */
+    .hero-loader {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.2rem;
+      transition: opacity 0.6s var(--ease-out);
+    }
+
+    .hero-loader.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .hero-loader-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .hero-loader-track {
+      width: 140px;
+      height: 1px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 1px;
+      overflow: hidden;
+    }
+
+    .hero-loader-fill {
+      height: 100%;
+      background: var(--accent);
+      width: 0%;
+      transition: width 0.08s linear;
+      border-radius: 1px;
+    }
+
+    /* Gradient overlays */
+    .hero-video-wrap::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to top,    rgba(8,8,8,0.92) 0%,  transparent 45%),
+        linear-gradient(to bottom, rgba(8,8,8,0.6)  0%,  transparent 30%),
+        linear-gradient(to right,  rgba(8,8,8,0.3)  0%,  transparent 50%);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Text overlay */
+    .hero-overlay {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: flex-end;
+      padding: 4rem 3rem;
+      gap: 2rem;
+    }
+
+    .hero-overlay-left {}
+    .hero-overlay-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 1rem;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.2rem;
+    }
+
+    .hero-tag::before {
+      content: '';
+      display: block;
+      width: 2rem;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .hero-title {
+      font-size: clamp(3rem, 5.5vw, 5.5rem);
+      line-height: 1.0;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      margin-bottom: 0;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-sub {
+      font-size: 0.85rem;
+      color: rgba(232,226,217,0.65);
+      max-width: 26ch;
+      line-height: 1.8;
+      text-align: right;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    /* Progress bar */
+    .hero-progress-wrap {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: rgba(255,255,255,0.08);
+      z-index: 3;
+    }
+
+    .hero-progress-bar {
+      height: 100%;
+      background: var(--accent);
+      transform-origin: left;
+      transform: scaleX(0);
+      transition: transform 0.05s linear;
+    }
+
+    /* Scroll hint */
+    .hero-scroll {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(232,226,217,0.4);
+      animation: scrollHint 2.5s ease-in-out infinite;
+    }
+
+    .hero-scroll::after {
+      content: '';
+      display: block;
+      width: 1px;
+      height: 2.5rem;
+      background: linear-gradient(to bottom, rgba(200,169,110,0.6), transparent);
+    }
+
+    @keyframes scrollHint {
+      0%, 100% { opacity: 0.4; transform: translateX(-50%) translateY(0); }
+      50%       { opacity: 1;   transform: translateX(-50%) translateY(6px); }
+    }
+
+    /* Scrub timestamp pill */
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg);
+      text-decoration: none;
+      padding: 0.9rem 2rem;
+      border-radius: 100px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      transition: transform 0.3s var(--ease-out), background 0.3s;
+    }
+
+    .btn-primary:hover { transform: scale(1.04); background: #d4b87a; }
+
+    .btn-ghost {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.82rem;
+      letter-spacing: 0.06em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: color 0.3s;
+    }
+
+    .btn-ghost:hover { color: var(--white); }
+    .btn-ghost .arrow { transition: transform 0.3s var(--ease-out); }
+    .btn-ghost:hover .arrow { transform: translateX(4px); }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 3rem;
+      right: 3rem;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      writing-mode: vertical-rl;
+    }
+
+    .hero-scroll::before {
+      content: '';
+      display: block;
+      width: 1px;
+      height: 3rem;
+      background: linear-gradient(to bottom, transparent, var(--muted));
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.3; transform: scaleY(0.8); }
+      50%       { opacity: 1;   transform: scaleY(1); }
+    }
+
+    /* ── Stats bar ── */
+
+    /* ── Section scaffolding ── */
+    section { padding: 7rem 3rem; }
+
+    .section-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+    }
+
+    .section-tag::before {
+      content: '';
+      display: block;
+      width: 2rem;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .section-title {
+      font-size: clamp(2.5rem, 4vw, 4rem);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--white);
+    }
+
+    /* ── Disciplines — editorial panels ── */
+    .disciplines {
+      padding: 5rem 0 0;
+      background: var(--surface);
+    }
+
+    .disciplines-header {
+      padding: 0 3rem 3rem;
+    }
+
+    .disc-panel {
+      display: grid;
+      grid-template-columns: 60% 40%;
+      min-height: 55vh;
+      border-top: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .disc-panel--rev {
+      grid-template-columns: 40% 60%;
+    }
+
+    .disc-panel--rev .disc-photo { order: 2; }
+    .disc-panel--rev .disc-text  { order: 1; }
+
+    .disc-photo {
+      overflow: hidden;
+      position: relative;
+    }
+
+    .disc-photo img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: brightness(0.88) saturate(0.9);
+      transition: transform 0.9s var(--ease-out), filter 0.6s;
+    }
+
+    .disc-panel:hover .disc-photo img {
+      transform: scale(1.04);
+      filter: brightness(0.95) saturate(1);
+    }
+
+    .disc-text {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 4rem 4.5rem;
+      gap: 1.4rem;
+      border-left: 1px solid var(--border);
+    }
+
+    .disc-panel--rev .disc-text {
+      border-left: none;
+      border-right: 1px solid var(--border);
+    }
+
+    .disc-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.35em;
+      color: var(--accent);
+      opacity: 0.75;
+    }
+
+    .disc-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 3vw, 2.8rem);
+      font-weight: 500;
+      line-height: 1.1;
+      color: var(--white);
+      margin: 0;
+    }
+
+    .disc-body {
+      font-size: 0.93rem;
+      line-height: 1.85;
+      color: var(--muted);
+      max-width: 36ch;
+      margin: 0;
+    }
+
+    .disc-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(200,169,110,0.35);
+      padding-bottom: 0.25rem;
+      width: fit-content;
+      transition: color 0.25s, border-color 0.25s;
+      margin-top: 0.5rem;
+    }
+
+    .disc-cta:hover {
+      color: var(--fg);
+      border-color: var(--fg);
+    }
+
+    @media (max-width: 768px) {
+      .disc-panel,
+      .disc-panel--rev {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+      .disc-photo { min-height: 55vw; order: 0 !important; }
+      .disc-text  { order: 1 !important; padding: 2.5rem 1.5rem; border: none; border-top: 1px solid var(--border); }
+    }
+
+    /* ── Gallery ── */
+    .gallery-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 4rem;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 1rem;
+    }
+
+    .g-item {
+      overflow: hidden;
+      border-radius: 1.2rem;
+      position: relative;
+      background: var(--surface);
+    }
+
+    .g-item::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(8,8,8,0);
+      transition: background 0.4s;
+    }
+
+    .g-item:hover::after { background: rgba(8,8,8,0.2); }
+
+    .g-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.7s var(--ease-out);
+    }
+
+    .g-item:hover img { transform: scale(1.06); }
+
+    .g1 { grid-column: span 5; height: 380px; }
+    .g2 { grid-column: span 4; height: 380px; }
+    .g3 { grid-column: span 3; height: 380px; }
+    .g4 { grid-column: span 3; height: 280px; }
+    .g5 { grid-column: span 6; height: 280px; }
+    .g6 { grid-column: span 3; height: 280px; }
+
+    /* ── FPV Section ── */
+    .fpv {
+      background: var(--surface);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .fpv-inner {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 5rem;
+      align-items: center;
+    }
+
+    .fpv-visual {
+      position: relative;
+      height: 600px;
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .fpv-visual img,
+    .fpv-visual video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.8) saturate(1.1);
+    }
+
+    .fpv-badge {
+      position: absolute;
+      bottom: 2rem;
+      left: 2rem;
+      background: rgba(8,8,8,0.7);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+      border-radius: 1rem;
+      padding: 1rem 1.5rem;
+    }
+
+    .fpv-badge-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .fpv-badge-val {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      color: var(--accent);
+    }
+
+    .fpv-content { padding: 2rem 0; }
+
+    .fpv-list {
+      list-style: none;
+      margin: 2.5rem 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    .fpv-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .fpv-list li::before {
+      content: '';
+      flex-shrink: 0;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--accent);
+      margin-top: 0.65rem;
+    }
+
+    /* ── Real Estate ── */
+    .realestate-inner {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 5rem;
+      align-items: center;
+    }
+
+    .re-gallery {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .re-img {
+      border-radius: 1.2rem;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .re-img img {
+      width: 100%;
+      height: 240px;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s var(--ease-out);
+      filter: brightness(0.85);
+    }
+
+    .re-img:hover img { transform: scale(1.04); }
+    .re-img--tall img { height: 500px; }
+
+    .re-content { padding: 2rem 0; }
+
+    .re-features {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin: 2.5rem 0;
+    }
+
+    .re-feature {
+      padding: 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      background: var(--surface);
+    }
+
+    .re-feature-icon {
+      font-size: 1.2rem;
+      margin-bottom: 0.75rem;
+      color: var(--accent);
+      font-family: 'Playfair Display', serif;
+    }
+
+    .re-feature-title {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--white);
+      margin-bottom: 0.3rem;
+    }
+
+    .re-feature-desc {
+      font-size: 0.75rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+
+    /* ── Travel teaser ── */
+    .travel-section-head { margin-bottom: 3rem; }
+
+    .travel-teaser {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+      background: #05050a;
+      border-radius: 2rem;
+      padding: 5rem;
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .travel-teaser::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(700px circle at 75% 50%, rgba(200,169,110,0.05) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .travel-teaser-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2.2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .travel-num {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(4.5rem, 9vw, 8rem);
+      line-height: 0.88;
+      color: var(--white);
+      letter-spacing: -0.04em;
+    }
+
+    .travel-num-label {
+      display: block;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 300;
+      margin-top: 0.9rem;
+    }
+
+    .travel-teaser-desc {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.85;
+      max-width: 38ch;
+    }
+
+    .travel-destinations {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+
+    .travel-dest-row {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      color: rgba(232,226,217,0.38);
+    }
+
+    .travel-dest-row::before {
+      content: '';
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: 0.5;
+      flex-shrink: 0;
+    }
+
+    .btn-atlas {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.7rem;
+      background: transparent;
+      border: 1px solid rgba(200,169,110,0.4);
+      color: var(--accent);
+      text-decoration: none;
+      padding: 0.95rem 2rem;
+      border-radius: 100px;
+      font-size: 0.82rem;
+      letter-spacing: 0.1em;
+      transition: background 0.3s, border-color 0.3s, transform 0.3s var(--ease-out);
+      align-self: flex-start;
+    }
+
+    .btn-atlas:hover {
+      background: rgba(200,169,110,0.09);
+      border-color: var(--accent);
+      transform: scale(1.03);
+    }
+
+    .btn-atlas .arrow { transition: transform 0.3s var(--ease-out); }
+    .btn-atlas:hover .arrow { transform: translateX(5px); }
+
+    /* Cycling destination */
+    .travel-cycle {
+      padding: 1.1rem 1.4rem;
+      border: 1px solid var(--border);
+      border-left: 2px solid var(--accent);
+      background: rgba(200,169,110,0.03);
+      border-radius: 0 0.5rem 0.5rem 0;
+    }
+
+    .travel-cycle-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .travel-cycle-place {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      color: var(--white);
+      font-style: italic;
+      transition: opacity 0.4s;
+    }
+
+    .travel-cycle-coords {
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      margin-top: 0.25rem;
+      transition: opacity 0.4s;
+    }
+
+    /* Travel photo */
+    .travel-photo-wrap {
+      position: relative;
+      height: 480px;
+      border-radius: 1.4rem;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .travel-photo-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: brightness(0.78) saturate(0.88);
+      transition: transform 0.9s var(--ease-out), filter 0.5s, opacity 0.45s ease;
+    }
+
+    .travel-teaser:hover .travel-photo-wrap img {
+      transform: scale(1.03);
+      filter: brightness(0.72) saturate(0.95);
+    }
+
+    .travel-photo-wrap::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(5,5,10,0.65) 0%, transparent 55%);
+      pointer-events: none;
+    }
+
+    .travel-photo-badge {
+      position: absolute;
+      bottom: 1.8rem;
+      left: 1.8rem;
+      z-index: 2;
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(232,226,217,0.5);
+    }
+
+    /* Marquee */
+    .travel-marquee {
+      overflow: hidden;
+      margin-top: 2.5rem;
+      padding: 1rem 0;
+      border-top: 1px solid var(--border);
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+      mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+    }
+
+    .travel-marquee-track {
+      display: flex;
+      width: max-content;
+      animation: marquee-scroll 55s linear infinite;
+    }
+
+    .travel-marquee-track:hover { animation-play-state: paused; }
+
+    .travel-marquee-item {
+      white-space: nowrap;
+      font-size: 0.68rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0 0.1rem;
+    }
+
+    .travel-marquee-sep {
+      color: var(--accent);
+      padding: 0 1.2rem;
+      opacity: 0.5;
+    }
+
+    @keyframes marquee-scroll {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    @media (max-width: 900px) {
+      .travel-teaser { grid-template-columns: 1fr; padding: 3rem 2rem; gap: 3rem; }
+      .travel-photo-wrap { min-height: 300px; }
+    }
+
+    /* ── About ── */
+    .about {
+      padding: 6rem 3rem;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4rem;
+    }
+    .about-photo-wrap {
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      overflow: hidden;
+      position: relative;
+      flex-shrink: 0;
+      border: 1px solid var(--border);
+    }
+    .about-photo {
+      width: 180%;
+      height: 180%;
+      object-fit: cover;
+      object-position: center 28%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      filter: brightness(0.92) saturate(0.85);
+    }
+    .about-text {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .about-name {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 2.5vw, 2.4rem);
+      font-weight: 500;
+      color: var(--white);
+      margin: 0;
+    }
+    .about-sub {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .about-ig {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-top: 0.75rem;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(200,169,110,0.3);
+      padding-bottom: 0.2rem;
+      width: fit-content;
+      transition: color 0.25s, border-color 0.25s;
+    }
+    .about-ig:hover { color: var(--white); border-color: var(--white); }
+
+    /* ── Contact ── */
+    .contact {
+      background: var(--surface);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      padding: 0;
+      min-height: 70dvh;
+    }
+
+    .contact-left {
+      padding: 7rem 4rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .contact-right {
+      border-left: 1px solid var(--border);
+      padding: 7rem 4rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .contact-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .contact-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .contact-item-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .contact-item-val {
+      font-size: 0.95rem;
+      color: var(--white);
+    }
+
+    .contact-item-val a {
+      color: var(--white);
+      text-decoration: none;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 2px;
+      transition: border-color 0.3s;
+    }
+
+    .contact-item-val a:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── Form ── */
+    .form { display: flex; flex-direction: column; gap: 1.2rem; }
+
+    .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+
+    .form-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .form-input, .form-textarea, .form-select {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 0.9rem 1.2rem;
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.3s;
+      width: 100%;
+    }
+
+    .form-input:focus, .form-textarea:focus, .form-select:focus {
+      border-color: var(--accent);
+    }
+
+    .form-input::placeholder, .form-textarea::placeholder { color: var(--muted); }
+    .form-textarea { resize: vertical; min-height: 120px; }
+    .form-select option { background: var(--surface); }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    .btn-submit {
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      padding: 1rem 2.5rem;
+      border-radius: 100px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: transform 0.3s var(--ease-out), background 0.3s;
+      align-self: flex-start;
+      margin-top: 0.5rem;
+    }
+
+    .btn-submit:hover { transform: scale(1.04); background: #d4b87a; }
+
+    /* ── Footer ── */
+    footer {
+      padding: 3rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-copy {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .footer-links a {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      transition: color 0.3s;
+    }
+
+    .footer-links a:hover { color: var(--accent); }
+
+    /* ── Reveal animations ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      nav { padding: 1.2rem 1.5rem; }
+      .nav-links { display: none; }
+
+      section { padding: 5rem 1.5rem; }
+
+      .hero { grid-template-columns: 1fr; }
+      .hero-right { display: none; }
+      .hero-left { padding: 8rem 1.5rem 5rem; }
+
+
+      .services-header { flex-direction: column; gap: 1rem; align-items: flex-start; }
+
+      .bento { grid-template-columns: 1fr; }
+      .bento-card--lg, .bento-card--sm, .bento-card--wide, .bento-card--fill { grid-column: span 1; min-height: 320px; }
+
+      .gallery-grid { grid-template-columns: 1fr 1fr; }
+      .g1, .g2, .g3, .g4, .g5, .g6 { grid-column: span 1; height: 200px; }
+
+      .fpv-inner, .realestate-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+      .fpv-visual { height: 340px; }
+
+      .re-gallery { grid-template-columns: 1fr; }
+      .re-img--tall img { height: 300px; }
+
+      .process-steps { grid-template-columns: 1fr 1fr; }
+
+      .contact { grid-template-columns: 1fr; }
+      .contact-left, .contact-right { padding: 4rem 1.5rem; }
+      .contact-right { border-left: none; border-top: 1px solid var(--border); }
+
+      .form-row { grid-template-columns: 1fr; }
+
+      footer { flex-direction: column; gap: 1.5rem; text-align: center; }
+      .cursor, .cursor-ring { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+
+  <!-- Nav -->
+  <nav>
+    <a href="#" class="nav-logo serif">Q. Allard</a>
+    <ul class="nav-links">
+      <li><a href="#services">Work</a></li>
+      <li><a href="#gallery">Gallery</a></li>
+      <li><a href="realestate.html">Real Estate</a></li>
+      <li><a href="travel.html">Travel</a></li>
+      <li><a href="#contact" class="nav-cta">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero — scroll-scrub video -->
+  <div class="hero-track" id="home">
+    <div class="hero-sticky">
+
+      <!-- 16:9 video -->
+      <div class="hero-video-wrap">
+        <video id="heroVideoSrc" src="Hero Header/hf_20260512_035403_556d22ec-b8ec-4c3a-89e4-f833b8412d27.mp4" muted playsinline preload="auto"></video>
+        <video id="heroVideoFallback" src="Hero Header/hf_20260512_035403_556d22ec-b8ec-4c3a-89e4-f833b8412d27.mp4" muted playsinline autoplay loop style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;filter:brightness(0.72) saturate(0.9);"></video>
+        <canvas id="heroCanvas"></canvas>
+        <div class="hero-loader" id="heroLoader">
+          <div class="hero-loader-label">Loading</div>
+          <div class="hero-loader-track">
+            <div class="hero-loader-fill" id="heroLoaderFill"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Text overlay -->
+      <div class="hero-overlay">
+        <div class="hero-overlay-left">
+          <div class="hero-tag reveal">Santa Cruz, CA</div>
+          <h1 class="hero-title reveal reveal-delay-1">
+            Real Estate<br>
+            & Drone<br>
+            <em>Photography.</em>
+          </h1>
+        </div>
+        <div class="hero-overlay-right reveal reveal-delay-2">
+          <p class="hero-sub">
+            Helping properties and places be seen the way they deserve — from ground level to the air above.
+          </p>
+          <div class="hero-actions">
+            <a href="#services" class="btn-primary">View Portfolio</a>
+            <a href="#contact" class="btn-ghost">Contact <span class="arrow">&#8594;</span></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scroll progress bar at bottom edge -->
+      <div class="hero-progress-wrap">
+        <div class="hero-progress-bar" id="heroProgressBar"></div>
+      </div>
+
+      <!-- Scroll hint -->
+      <div class="hero-scroll">Scroll</div>
+
+    </div>
+  </div>
+
+  <!-- Stats bar -->
+
+  <!-- Disciplines — Editorial Panels -->
+  <section class="disciplines" id="services">
+
+    <div class="disciplines-header">
+      <div class="section-tag reveal">Disciplines</div>
+    </div>
+
+    <!-- 01 — Real Estate -->
+    <div class="disc-panel reveal">
+      <div class="disc-photo">
+        <img src="Listings/Seascape Resort Unit 60/211-00.jpg" alt="Seascape Resort Unit 60 ocean view" />
+      </div>
+      <div class="disc-text">
+        <span class="disc-num">01</span>
+        <h3 class="disc-title">Real Estate<br>Photography</h3>
+        <p class="disc-body">Real estate photography along the Santa Cruz County coast — interiors, exteriors, and aerial, whatever the property needs.</p>
+        <a href="realestate.html" class="disc-cta">View Listings →</a>
+      </div>
+    </div>
+
+    <!-- 02 — FPV & Aerial -->
+    <div class="disc-panel disc-panel--rev reveal">
+      <div class="disc-photo">
+        <img src="Mavic Seascape Ocean.jpg" alt="Mavic aerial Seascape ocean" />
+      </div>
+      <div class="disc-text">
+        <span class="disc-num">02</span>
+        <h3 class="disc-title">FPV &<br>Aerial Cinematics</h3>
+        <p class="disc-body">I got into drones for the same reason I got into travel — perspective. There's something about being above it that makes you see it differently. Not just the view. The whole thing.</p>
+        <a href="#fpv" class="disc-cta">See the Work →</a>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Real Estate Section -->
+  <section id="realestate">
+    <div class="realestate-inner">
+      <div class="re-gallery reveal">
+        <div class="re-img re-img--tall">
+          <img src="listings/Seascape Resort Unit 60/211-00.jpg" alt="Interior living space" />
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+          <div class="re-img">
+            <img src="listings/Seascape Resort Unit 221/221 002.jpg" alt="Room detail" />
+          </div>
+          <div class="re-img">
+            <img src="listings/Seascape Resort Unit 302/302 002.jpg" alt="Interior shot" />
+          </div>
+        </div>
+      </div>
+      <div class="re-content reveal reveal-delay-1">
+        <div class="section-tag">Real Estate</div>
+        <h2 class="section-title">Listings that<br><em>command attention.</em></h2>
+        <p style="color: var(--muted); font-size: 0.9rem; line-height: 1.8; margin-top: 1.5rem; max-width: 38ch;">
+          Every shoot is a collaboration — understanding the space, the light, and the story a buyer needs to feel. Clean compositions, true-to-life color, delivered fast.
+        </p>
+        <div class="re-features">
+          <div class="re-feature">
+            <div class="re-feature-icon">I</div>
+            <div class="re-feature-title">Flambient Interiors</div>
+            <div class="re-feature-desc">Flash-ambient blending for perfectly exposed rooms regardless of natural light.</div>
+          </div>
+          <div class="re-feature">
+            <div class="re-feature-icon">II</div>
+            <div class="re-feature-title">Twilight Exteriors</div>
+            <div class="re-feature-desc">Golden hour and blue hour compositions that set listings apart.</div>
+          </div>
+          <div class="re-feature">
+            <div class="re-feature-icon">III</div>
+            <div class="re-feature-title">Aerial Overview</div>
+            <div class="re-feature-desc">FAA-certified drone photos showing lot, location, and neighborhood context.</div>
+          </div>
+          <div class="re-feature">
+            <div class="re-feature-icon">IV</div>
+            <div class="re-feature-title">Same-Week Delivery</div>
+            <div class="re-feature-desc">Fully edited, full-resolution gallery delivered within days of the shoot.</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;">
+          <a href="realestate.html" class="btn-primary">View Listings</a>
+          <a href="#contact" class="btn-ghost">Contact <span class="arrow">&#8594;</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FPV Section -->
+  <section class="fpv" id="fpv">
+    <div class="fpv-inner">
+      <div class="fpv-visual reveal">
+        <video
+          src="FPV shots/fpv-highlight.mp4"
+          autoplay
+          muted
+          loop
+          playsinline
+        ></video>
+        <div class="fpv-badge">
+          <div class="fpv-badge-label">FPV Cinematic</div>
+          <div class="fpv-badge-val">Original Footage</div>
+        </div>
+      </div>
+      <div class="fpv-content reveal reveal-delay-1">
+        <div class="section-tag">FPV & Aerial</div>
+        <h2 class="section-title">A different<br><em>angle.</em></h2>
+        <p style="color: var(--muted); font-size: 0.9rem; line-height: 1.8; margin-top: 1.5rem; max-width: 38ch;">
+          HD cinematic footage — from sweeping aerials to tight cinematic passes.
+        </p>
+        <p style="color: var(--accent); font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase; margin-top: 1rem; margin-bottom: 1.5rem;">FAA Part 107 Certified</p>
+        <a href="#contact" class="btn-primary">Contact</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Travel -->
+  <section id="travel">
+    <div class="travel-section-head">
+      <div class="section-tag reveal">Personal</div>
+      <h2 class="section-title reveal reveal-delay-1">Life between<br><em>the shoots.</em></h2>
+    </div>
+
+    <div class="travel-teaser reveal reveal-delay-2">
+      <!-- Left: text + CTA -->
+      <div class="travel-teaser-text">
+        <p class="travel-teaser-desc">
+          These aren't portfolio shots — just places I've been lucky enough to see and wanted to bring something back from.
+        </p>
+        <div class="travel-cycle">
+          <div class="travel-cycle-label">Currently browsing</div>
+          <div class="travel-cycle-place" id="cycle-place">Japan</div>
+          <div class="travel-cycle-coords" id="cycle-coords">35.68° N · 139.65° E</div>
+        </div>
+        <a href="travel.html" class="btn-atlas">Open the Atlas <span class="arrow">&#8594;</span></a>
+      </div>
+
+      <!-- Right: travel photo -->
+      <div class="travel-photo-wrap">
+        <img src="travel/Japan/IMG_4388.jpeg" alt="Travel" id="travel-cycle-photo" />
+      </div>
+    </div>
+
+    <!-- Marquee strip -->
+    <div class="travel-marquee">
+      <div class="travel-marquee-track" id="marqueeTrack"></div>
+    </div>
+  </section>
+
+  <!-- Gallery -->
+  <section id="gallery">
+    <div class="gallery-header">
+      <div>
+        <div class="section-tag reveal">Selected Work</div>
+        <h2 class="section-title reveal reveal-delay-1">Recent shoots</h2>
+      </div>
+      <a href="#contact" class="btn-ghost reveal reveal-delay-2">All projects <span class="arrow">&#8594;</span></a>
+    </div>
+    <div class="gallery-grid reveal">
+      <div class="g-item g1">
+        <img src="Listings/Seascape Resort Unit 302/302 002.jpg" alt="Seascape Resort Unit 302 bedroom" />
+      </div>
+      <div class="g-item g2">
+        <img src="travel/Japan/IMG_0956.JPG" alt="Japan travel" />
+      </div>
+      <div class="g-item g3">
+        <img src="travel/Sri Lanka/IMG_7677.JPG" alt="Sri Lanka" />
+      </div>
+      <div class="g-item g4">
+        <img src="Listings/Seascape Resort Unit 60/211-001.jpg" alt="Seascape Resort Unit 60 interior" />
+      </div>
+      <div class="g-item g5">
+        <img src="travel/France/IMG_5523.jpeg" alt="France travel" />
+      </div>
+      <div class="g-item g6">
+        <img src="Listings/Seascape Resort Unit 211/211.3 014.jpg" alt="Seascape Resort Unit 211" />
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section class="about">
+    <div class="about-photo-wrap reveal">
+      <img class="about-photo" src="Profile Pic.JPG" alt="Quinn Allard" />
+    </div>
+    <div class="about-text reveal">
+      <h2 class="about-name">Quinn Allard</h2>
+      <span class="about-sub">Photographer · Santa Cruz, CA</span>
+      <a class="about-ig" href="https://instagram.com/quinstgram" target="_blank" rel="noopener">
+        &#64;quinstgram
+      </a>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section class="contact" id="contact">
+    <div class="contact-left">
+      <div class="section-tag reveal">Get in Touch</div>
+      <h2 class="section-title reveal reveal-delay-1">Let's make<br><em>something great.</em></h2>
+      <p style="color: var(--muted); font-size: 0.9rem; line-height: 1.8; margin-top: 1.5rem; max-width: 36ch;" class="reveal reveal-delay-2">
+        Available for real estate shoots, FPV cinematic projects, commercial photography, and editorial work. Response within 24 hours.
+      </p>
+      <div class="contact-info reveal reveal-delay-3">
+        <div class="contact-item">
+          <span class="contact-item-label">Email</span>
+          <span class="contact-item-val"><a href="mailto:quinnallard98@gmail.com">quinnallard98@gmail.com</a></span>
+        </div>
+        <div class="contact-item">
+          <span class="contact-item-label">Location</span>
+          <span class="contact-item-val">Available Nationwide — Based in Santa Cruz, CA</span>
+        </div>
+        <div class="contact-item">
+          <span class="contact-item-label">Response</span>
+          <span class="contact-item-val">Within 24 hours, typically faster</span>
+        </div>
+        <div class="contact-item">
+          <span class="contact-item-label">Follow</span>
+          <span class="contact-item-val">
+            <a href="https://instagram.com/quinstgram" target="_blank" rel="noopener">Instagram</a>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="contact-right reveal">
+      <form class="form" onsubmit="handleSubmit(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">First Name</label>
+            <input type="text" class="form-input" placeholder="Alex" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name</label>
+            <input type="text" class="form-input" placeholder="Morgan" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" placeholder="alex@agency.com" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Project Type</label>
+          <select class="form-select">
+            <option value="" disabled selected>Select a service</option>
+            <option>Real Estate Photography</option>
+            <option>FPV Cinematic</option>
+            <option>Standard Aerial / Drone</option>
+            <option>Portrait / Commercial</option>
+            <option>Full Property Package</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Message</label>
+          <textarea class="form-textarea" placeholder="Tell me about the shoot — property type, timeline, deliverables needed..."></textarea>
+        </div>
+        <button type="submit" class="btn-submit">Send Inquiry</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <span class="footer-copy">&#169; 2026 Quinn Allard. All rights reserved.</span>
+    <ul class="footer-links">
+      <li><a href="https://instagram.com/quinstgram" target="_blank" rel="noopener">Instagram</a></li>
+      <li><a href="#">Privacy</a></li>
+    </ul>
+  </footer>
+
+  <script>
+    // ── Reveal on scroll ──
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+
+
+    // ── Form submit ──
+    function handleSubmit(e) {
+      e.preventDefault();
+      const btn = e.target.querySelector('.btn-submit');
+      btn.textContent = 'Sent!';
+      btn.style.background = '#5a9e6f';
+      setTimeout(() => {
+        btn.textContent = 'Send Inquiry';
+        btn.style.background = '';
+      }, 3000);
+    }
+
+    // ── Nav blur on scroll ──
+    const nav = document.querySelector('nav');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 60) {
+        nav.style.backdropFilter = 'blur(20px)';
+      } else {
+        nav.style.backdropFilter = 'blur(0px)';
+      }
+    });
+
+    // ── Hero scroll-scrub (canvas frame pre-capture) ──
+    const heroTrack   = document.querySelector('.hero-track');
+    const heroCanvas  = document.getElementById('heroCanvas');
+    const heroCtx     = heroCanvas.getContext('2d', { alpha: false });
+    const heroSrc     = document.getElementById('heroVideoSrc');
+    const progressBar = document.getElementById('heroProgressBar');
+    const heroLoader  = document.getElementById('heroLoader');
+    const loaderFill  = document.getElementById('heroLoaderFill');
+
+    const VIDEO_DURATION = 3;
+    const frames = [];
+    let heroReady = false;
+    let rafPending = false;
+
+    // Size canvas to fill its container
+    function sizeCanvas() {
+      heroCanvas.width  = heroCanvas.offsetWidth  * devicePixelRatio;
+      heroCanvas.height = heroCanvas.offsetHeight * devicePixelRatio;
+      heroCtx.scale(devicePixelRatio, devicePixelRatio);
+      if (heroReady) drawFrame(currentProgress());
+    }
+
+    function currentProgress() {
+      const rect = heroTrack.getBoundingClientRect();
+      const scrollable = heroTrack.offsetHeight - window.innerHeight;
+      return Math.min(Math.max(-rect.top / scrollable, 0), 1);
+    }
+
+    function drawFrame(progress) {
+      if (!heroReady || frames.length === 0) return;
+      const idx = Math.min(Math.floor(progress * frames.length), frames.length - 1);
+      const f   = frames[idx];
+      const cw  = heroCanvas.offsetWidth;
+      const ch  = heroCanvas.offsetHeight;
+      // cover-fit the frame into the canvas
+      const scale = Math.max(cw / f.width, ch / f.height);
+      const dw = f.width  * scale;
+      const dh = f.height * scale;
+      heroCtx.drawImage(f, (cw - dw) / 2, (ch - dh) / 2, dw, dh);
+    }
+
+    const heroVideoFallback = document.getElementById('heroVideoFallback');
+
+    function finishLoader() {
+      heroReady = true;
+      heroLoader.classList.add('hidden');
+      if (frames.length === 0) {
+        // Frame capture failed — show the autoplay video directly
+        heroVideoFallback.style.display = 'block';
+        heroCanvas.style.display = 'none';
+        heroVideoFallback.play().catch(() => {});
+      } else {
+        drawFrame(currentProgress());
+      }
+    }
+
+    async function captureFrames() {
+      // Fallback: if video doesn't load within 8s, just hide the loader
+      const timeoutId = setTimeout(() => finishLoader(), 8000);
+
+      try {
+        await new Promise((r, reject) => {
+          if (heroSrc.readyState >= 1) return r();
+          heroSrc.addEventListener('loadedmetadata', r, { once: true });
+          heroSrc.addEventListener('error', reject, { once: true });
+          heroSrc.load();
+        });
+
+        const duration = Math.min(heroSrc.duration, VIDEO_DURATION);
+
+        await new Promise(resolve => {
+          heroSrc.currentTime = 0;
+          heroSrc.playbackRate = 2;
+
+          function onFrame() {
+            const progress = heroSrc.currentTime / duration;
+            loaderFill.style.width = Math.round(progress * 100) + '%';
+
+            createImageBitmap(heroSrc).then(bitmap => {
+              frames.push(bitmap);
+
+              if (heroSrc.currentTime >= duration - 0.05 || heroSrc.ended) {
+                heroSrc.pause();
+                resolve();
+              } else {
+                heroSrc.requestVideoFrameCallback(onFrame);
+              }
+            });
+          }
+
+          heroSrc.requestVideoFrameCallback(onFrame);
+          heroSrc.play().catch(() => resolve()); // autoplay may be blocked
+        });
+
+        clearTimeout(timeoutId);
+        finishLoader();
+      } catch(e) {
+        clearTimeout(timeoutId);
+        finishLoader();
+      }
+    }
+
+    function onScroll() {
+      if (!rafPending) {
+        rafPending = true;
+        requestAnimationFrame(() => {
+          const p = currentProgress();
+          drawFrame(p);
+          progressBar.style.transform = `scaleX(${p})`;
+          rafPending = false;
+        });
+      }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', sizeCanvas);
+    sizeCanvas();
+    captureFrames();
+
+    // ── Travel: cycling destination ──
+    const DESTINATIONS = [
+      { name:"Tokyo", country:"Japan", lat:35.68, lon:139.65 },
+      { name:"Paris", country:"France", lat:48.86, lon:2.35 },
+      { name:"Dubrovnik", country:"Croatia", lat:42.65, lon:18.09 },
+      { name:"Bali", country:"Indonesia", lat:-8.34, lon:115.09 },
+      { name:"Dubai", country:"UAE", lat:25.20, lon:55.27 },
+      { name:"Singapore", country:"Singapore", lat:1.35, lon:103.82 },
+      { name:"Istanbul", country:"Turkey", lat:41.01, lon:28.98 },
+      { name:"Budapest", country:"Hungary", lat:47.50, lon:19.04 },
+      { name:"Bangkok", country:"Thailand", lat:13.76, lon:100.50 },
+      { name:"Monte Carlo", country:"Monaco", lat:43.74, lon:7.42 },
+      { name:"Barcelona", country:"Spain", lat:41.39, lon:2.17 },
+      { name:"Edinburgh", country:"Scotland", lat:55.95, lon:-3.19 },
+      { name:"Seoul", country:"South Korea", lat:37.57, lon:126.98 },
+      { name:"Amsterdam", country:"Netherlands", lat:52.37, lon:4.90 },
+      { name:"Siem Reap", country:"Cambodia", lat:13.37, lon:103.84 },
+      { name:"Vienna", country:"Austria", lat:48.21, lon:16.37 },
+      { name:"Colombo", country:"Sri Lanka", lat:6.93, lon:79.86 },
+      { name:"Hanoi", country:"Vietnam", lat:21.03, lon:105.85 },
+      { name:"Taipei", country:"Taiwan", lat:25.03, lon:121.57 },
+      { name:"Stockholm", country:"Sweden", lat:59.33, lon:18.07 },
+      { name:"Shanghai", country:"China", lat:31.23, lon:121.47 },
+      { name:"Manila", country:"Philippines", lat:14.60, lon:120.98 },
+      { name:"Port-au-Prince", country:"Haiti", lat:18.59, lon:-72.31 },
+      { name:"Copenhagen", country:"Denmark", lat:55.68, lon:12.57 },
+      { name:"Bucharest", country:"Romania", lat:44.43, lon:26.10 },
+    ];
+
+    const cyclePlace  = document.getElementById('cycle-place');
+    const cycleCoords = document.getElementById('cycle-coords');
+    const cyclePhoto  = document.getElementById('travel-cycle-photo');
+    let cycleIdx = 0;
+
+    const DEST_PHOTOS = {
+      "Japan":       "travel/Japan/IMG_0956.JPG",
+      "France":      "travel/France/IMG_5510.jpeg",
+      "Croatia":     "travel/Croatia/IMG_8352.JPG",
+      "Indonesia":   "travel/Indonesia/IMG_1047.jpeg",
+      "UAE":         "travel/UAE/IMG_8048.JPG",
+      "Singapore":   "travel/Singapore/IMG_6480.jpeg",
+      "Turkey":      "travel/Turkey/IMG_9617.JPG",
+      "Hungary":     "travel/Hungary/IMG_8707.JPG",
+      "Thailand":    "travel/Thailand/IMG_6934.JPG",
+      "Monaco":      "travel/Monaco/IMG_5556.jpeg",
+      "Spain":       "travel/Spain/IMG_5236.jpeg",
+      "Scotland":    "travel/Scotland/IMG_8910.JPG",
+      "South Korea": "travel/South Korea/IMG_1132.JPG",
+      "Netherlands": "travel/Netherlands/IMG_9455.JPG",
+      "Cambodia":    "travel/Cambodia/IMG_0103.JPG",
+      "Austria":     "travel/Austria/IMG_8611.JPG",
+      "Sri Lanka":   "travel/Sri Lanka/IMG_0021.jpeg",
+      "Vietnam":     "travel/Vietnam/IMG_0038.JPG",
+      "Taiwan":      "travel/Taiwan/IMG_1500.JPG",
+      "Sweden":      "travel/Sweden/IMG_9113.JPG",
+      "China":       "travel/China/IMG_1227.JPG",
+      "Philippines": "travel/Phillipines/IMG_0312.JPG",
+      "Haiti":       "travel/Haiti/IMG_5564.jpeg",
+      "Denmark":     "travel/Denmark/IMG_9038.JPG",
+      "Romania":     "travel/Romania/IMG_9487.JPG",
+    };
+
+    function fmt(val, posLabel, negLabel) {
+      return `${Math.abs(val).toFixed(2)}° ${val >= 0 ? posLabel : negLabel}`;
+    }
+
+    function nextDest() {
+      cycleIdx = (cycleIdx + 1) % DESTINATIONS.length;
+      const d = DESTINATIONS[cycleIdx];
+      cyclePlace.style.opacity  = '0';
+      cycleCoords.style.opacity = '0';
+      if (cyclePhoto) cyclePhoto.style.opacity = '0';
+      setTimeout(() => {
+        cyclePlace.textContent  = d.country;
+        cycleCoords.textContent = `${fmt(d.lat,'N','S')} · ${fmt(d.lon,'E','W')}`;
+        if (cyclePhoto && DEST_PHOTOS[d.country]) {
+          cyclePhoto.src = DEST_PHOTOS[d.country];
+        }
+        cyclePlace.style.opacity  = '1';
+        cycleCoords.style.opacity = '1';
+        if (cyclePhoto) cyclePhoto.style.opacity = '1';
+      }, 450);
+    }
+    setInterval(nextDest, 4000);
+
+    // ── Travel: marquee ──
+    const COUNTRIES = ["United States","Mexico","Canada","Haiti","Spain","France","Monaco","England","Italy","Vatican City","Ireland","Czech Republic","Germany","Indonesia","Singapore","Malaysia","Thailand","Sri Lanka","UAE","Greece","Serbia","Croatia","Slovenia","Austria","Slovakia","Hungary","Scotland","Denmark","Sweden","Poland","Belgium","Netherlands","Romania","Moldova","Transnistria","Turkey","Vietnam","Cambodia","Philippines","Japan","South Korea","China","Taiwan"];
+    const track = document.getElementById('marqueeTrack');
+    if (track) {
+      const html = COUNTRIES.map(c => `<span class="travel-marquee-item">${c}</span><span class="travel-marquee-sep">·</span>`).join('');
+      track.innerHTML = html + html; // duplicate for seamless loop
+    }
+
+    // ── Hero text reveal on load ──
+    document.querySelectorAll('.hero-track .reveal').forEach((el, i) => {
+      setTimeout(() => el.classList.add('visible'), 300 + i * 150);
+    });
+
+  </script>
+</body>
+</html>

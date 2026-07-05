@@ -1,0 +1,1558 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Travels — A Photographer's Atlas</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg:          #0d100f;
+    --bg-2:        #0f1312;
+    --ink:         #ece8df;
+    --ink-dim:     #a9a79e;
+    --ink-fade:    #6a6964;
+    --amber:       #d4c9a8;   /* soft ivory accent */
+    --amber-deep:  #8a9b8c;   /* muted sage */
+    --gold:        #e8e1cc;
+    --rule:        rgba(236,232,223,0.08);
+    --rule-strong: rgba(236,232,223,0.18);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* ===== Vignette + film grain ===== */
+  .film {
+    position: fixed; inset: 0; pointer-events: none; z-index: 40;
+    background:
+      radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.55) 100%);
+    mix-blend-mode: multiply;
+  }
+  .grain {
+    position: fixed; inset: -50%; pointer-events: none; z-index: 41;
+    opacity: 0.07;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 0.9  0 0 0 0 0.7  0 0 0 1 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    animation: grain 1.2s steps(4) infinite;
+  }
+  @keyframes grain {
+    0%   { transform: translate(0,0); }
+    25%  { transform: translate(-2%, 1%); }
+    50%  { transform: translate(1%, -1%); }
+    75%  { transform: translate(-1%, 2%); }
+    100% { transform: translate(0,0); }
+  }
+
+  /* ===== Nav ===== */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 30;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 22px 40px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    background: linear-gradient(to bottom, rgba(15,13,11,0.9), rgba(15,13,11,0));
+  }
+  .nav .mark {
+    display: flex; align-items: center; gap: 10px;
+    color: var(--ink);
+  }
+  .nav .mark .sigil {
+    width: 18px; height: 18px; border: 1px solid var(--amber);
+    border-radius: 50%; position: relative;
+  }
+  .nav .mark .sigil::after {
+    content: ''; position: absolute; inset: 4px; border-radius: 50%;
+    background: var(--amber); box-shadow: 0 0 10px var(--amber);
+  }
+  .nav ul { list-style: none; display: flex; gap: 28px; padding: 0; margin: 0; }
+  .nav a { color: var(--ink-dim); text-decoration: none; transition: color .2s; }
+  .nav a:hover, .nav a.active { color: var(--amber); }
+
+  /* ===== Hero layout ===== */
+  .stage {
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+    background:
+      radial-gradient(1200px 800px at 70% 50%, rgba(126,168,200,0.06), transparent 60%),
+      radial-gradient(900px 600px at 20% 20%, rgba(180,190,180,0.03), transparent 60%),
+      var(--bg);
+  }
+
+  .globe-wrap {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 4vw;
+  }
+  #globe {
+    width: min(90vh, 72vw);
+    height: min(90vh, 72vw);
+    max-width: 1200px;
+    max-height: 1200px;
+    transform: translateX(10%);
+    transition: transform .6s ease;
+  }
+  @media (max-width: 1100px) {
+    .globe-wrap { justify-content: center; padding-left: 0; }
+    #globe { transform: translateX(0); width: 92vw; height: 92vw; }
+  }
+
+  .overlay {
+    position: relative;
+    z-index: 10;
+    pointer-events: none;
+    padding: 120px 64px 60px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    min-height: 100vh;
+    align-content: space-between;
+  }
+  .overlay > * { pointer-events: auto; }
+  /* Photo panel (right column) */
+  .photo-panel {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    justify-self: end;
+    align-self: center;
+    width: min(420px, 38vw);
+    display: flex; flex-direction: column;
+    gap: 18px;
+    padding: 28px 28px;
+    background: rgba(15,19,18,0.55);
+    border: 1px solid var(--rule);
+    backdrop-filter: blur(14px);
+  }
+  .pp-head { border-bottom: 1px solid var(--rule); padding-bottom: 16px; }
+  .pp-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--ink-fade); margin-bottom: 10px;
+  }
+  .pp-country {
+    font-family: 'EB Garamond', serif;
+    font-size: 32px; font-style: italic; font-weight: 400;
+    color: var(--ink); line-height: 1.05;
+  }
+  .pp-city {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--ink-dim); margin-top: 4px;
+  }
+  .pp-frames {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  }
+  .pp-frame {
+    aspect-ratio: 4 / 5;
+    border: 1px solid var(--rule);
+    position: relative;
+    overflow: hidden;
+    transition: border-color .2s;
+    background: #171b1a;
+  }
+  .pp-frame:hover { border-color: var(--rule-strong); }
+  .pp-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+  }
+  .pp-frame:hover img { transform: scale(1.04); }
+  .pp-frame.empty {
+    background: repeating-linear-gradient(45deg, rgba(236,232,223,0.04) 0 10px, rgba(236,232,223,0.08) 10px 20px), #171b1a;
+  }
+  .pp-frame .pp-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 0.25em; color: var(--ink-fade);
+    position: absolute; bottom: 10px; left: 10px;
+  }
+  .pp-foot {
+    display: flex; justify-content: space-between;
+    border-top: 1px solid var(--rule); padding-top: 16px;
+  }
+  .pp-foot button {
+    background: transparent; border: none;
+    color: var(--ink-dim);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+    cursor: pointer; padding: 4px 0;
+    transition: color .2s;
+  }
+  .pp-foot button:hover { color: var(--ink); }
+
+  @media (max-width: 900px) {
+    .photo-panel { grid-column: 1; grid-row: auto; width: 100%; justify-self: stretch; }
+  }
+
+
+  /* Top-left lockup */
+  .lede {
+    grid-column: 1;
+    max-width: 560px;
+  }
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 28px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .eyebrow::before {
+    content: ''; width: 40px; height: 1px; background: var(--amber);
+  }
+
+  h1.display {
+    font-family: 'EB Garamond', serif;
+    font-weight: 400;
+    font-size: clamp(44px, 5vw, 84px);
+    line-height: 0.92;
+    letter-spacing: -0.015em;
+    margin: 0 0 28px;
+    color: var(--ink);
+  }
+  h1.display em {
+    font-style: italic;
+    color: var(--ink);
+    font-weight: 400;
+  }
+
+  .lede p {
+    font-family: 'EB Garamond', serif;
+    font-size: clamp(17px, 1.3vw, 20px);
+    line-height: 1.55;
+    color: var(--ink-dim);
+    max-width: 460px;
+    margin: 0 0 36px;
+    text-wrap: pretty;
+  }
+
+  .byline {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-fade);
+    display: flex; gap: 24px; flex-wrap: wrap;
+  }
+  .byline span::before { content: '— '; color: var(--amber-deep); }
+
+  /* Bottom-left current-location card */
+  .location-card {
+    grid-column: 1;
+    max-width: 380px;
+    background: rgba(21,17,13,0.55);
+    border: 1px solid var(--rule);
+    backdrop-filter: blur(12px);
+    padding: 22px 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    position: relative;
+  }
+  .location-card .hdr {
+    display: flex; justify-content: space-between;
+    color: var(--ink-fade);
+    font-size: 9px;
+    margin-bottom: 14px;
+  }
+  .location-card .name {
+    font-family: 'EB Garamond', serif;
+    font-size: 28px;
+    font-weight: 400;
+    font-style: italic;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .location-card .sub {
+    color: var(--amber);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    margin-bottom: 12px;
+  }
+  .location-card .coords {
+    font-size: 10px;
+    color: var(--ink-fade);
+    letter-spacing: 0.15em;
+  }
+  .location-card .coords span { color: var(--ink-dim); }
+  .location-card .corner {
+    position: absolute; width: 10px; height: 10px;
+    border: 1px solid var(--amber);
+  }
+  .location-card .corner.tl { top: -1px; left: -1px; border-right: none; border-bottom: none; }
+  .location-card .corner.tr { top: -1px; right: -1px; border-left: none; border-bottom: none; }
+  .location-card .corner.bl { bottom: -1px; left: -1px; border-right: none; border-top: none; }
+  .location-card .corner.br { bottom: -1px; right: -1px; border-left: none; border-top: none; }
+
+  /* Right-side stats rail */
+  .stats {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    justify-self: end;
+    align-self: start;
+    width: min(340px, 32vw);
+    display: flex; flex-direction: column;
+    gap: 0;
+    text-align: right;
+  }
+  .stats .group {
+    padding: 22px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .stats .group:last-child { border-bottom: none; }
+  .stats .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--ink-fade);
+    margin-bottom: 6px;
+  }
+  .stats .val {
+    font-family: 'EB Garamond', serif;
+    font-size: 56px;
+    line-height: 1;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  .stats .val em {
+    font-style: italic; color: var(--amber);
+  }
+  .stats .unit {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--ink-dim);
+    margin-left: 6px;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 900px) {
+    .overlay { grid-template-columns: 1fr; padding: 100px 24px 40px; }
+    .stats { grid-column: 1; grid-row: auto; justify-self: start; text-align: left; width: 100%; }
+    #globe { transform: translateY(8%); }
+  }
+
+  /* ===== Country index strip ===== */
+  .atlas {
+    position: relative;
+    z-index: 10;
+    padding: 120px 64px 100px;
+    background: linear-gradient(to bottom, transparent 0%, var(--bg-2) 30%);
+  }
+  .atlas .section-head {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    margin-bottom: 48px;
+    gap: 40px;
+    border-top: 1px solid var(--rule);
+    padding-top: 32px;
+  }
+  .atlas h2 {
+    font-family: 'EB Garamond', serif;
+    font-weight: 400;
+    font-style: italic;
+    font-size: clamp(32px, 3.6vw, 56px);
+    margin: 0;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .atlas .section-head p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-fade);
+    max-width: 360px;
+    margin: 0;
+    text-align: right;
+  }
+
+  .index-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0;
+    border-top: 1px solid var(--rule);
+  }
+  .index-item {
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--rule);
+    border-right: 1px solid var(--rule);
+    cursor: pointer;
+    display: flex; flex-direction: column; gap: 4px;
+    transition: background .25s, color .25s;
+    position: relative;
+  }
+  .index-item:hover {
+    background: rgba(232,164,76,0.06);
+    color: var(--amber);
+  }
+  .index-item:hover .num { color: var(--amber); }
+  .index-item:hover::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--amber);
+  }
+  .index-item .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--ink-fade);
+    transition: color .2s;
+  }
+  .index-item .country {
+    font-family: 'EB Garamond', serif;
+    font-size: 22px;
+    color: var(--ink);
+    font-weight: 400;
+  }
+  .index-item .city {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+
+  /* Compass + decorations */
+  .compass { display: none;
+    position: absolute;
+    bottom: 40px; left: 64px;
+    width: 54px; height: 54px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--ink-fade);
+    z-index: 15;
+  }
+  .compass .ring {
+    position: absolute; inset: 0; border: 1px solid var(--rule-strong); border-radius: 50%;
+  }
+  .compass .n, .compass .s, .compass .e, .compass .w {
+    position: absolute; color: var(--amber);
+  }
+  .compass .n { top: -14px; left: 50%; transform: translateX(-50%); }
+  .compass .s { bottom: -14px; left: 50%; transform: translateX(-50%); }
+  .compass .e { right: -14px; top: 50%; transform: translateY(-50%); }
+  .compass .w { left: -14px; top: 50%; transform: translateY(-50%); }
+  .compass .needle {
+    position: absolute; left: 50%; top: 50%;
+    width: 1px; height: 50%;
+    background: linear-gradient(to top, transparent, var(--amber));
+    transform-origin: bottom center;
+    animation: spin 40s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .tick { display: none;
+    position: absolute;
+    bottom: 40px; right: 64px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--ink-fade);
+    z-index: 15;
+  }
+  .tick .dot {
+    display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--amber); box-shadow: 0 0 8px var(--amber);
+    margin-right: 8px; vertical-align: middle;
+    animation: blink 1.8s ease-in-out infinite;
+  }
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+  /* ===== Tweaks panel ===== */
+  .tweaks {
+    position: fixed;
+    right: 20px; bottom: 20px;
+    width: 280px;
+    background: rgba(10,9,8,0.92);
+    border: 1px solid var(--rule-strong);
+    backdrop-filter: blur(14px);
+    padding: 16px 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-dim);
+    z-index: 50;
+    display: none;
+  }
+  .tweaks.open { display: block; }
+  .tweaks h4 {
+    margin: 0 0 14px;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--amber);
+    display: flex; justify-content: space-between;
+  }
+  .tweaks .row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 0;
+    border-top: 1px solid var(--rule);
+    gap: 12px;
+  }
+  .tweaks label { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; }
+  .tweaks input[type=range] {
+    width: 100px; accent-color: var(--amber);
+  }
+  .tweaks button {
+    background: transparent;
+    border: 1px solid var(--rule-strong);
+    color: var(--ink-dim);
+    padding: 4px 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all .2s;
+  }
+  .tweaks button.on { background: var(--amber); color: #1a1308; border-color: var(--amber); }
+  .tweaks button:hover { border-color: var(--amber); color: var(--amber); }
+  .tweaks button.on:hover { color: #1a1308; }
+
+  /* Starfield */
+  #starfield {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Loading shim */
+  .loading {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--ink-fade);
+    text-transform: uppercase;
+    pointer-events: none;
+    z-index: 5;
+  }
+  .loading::after {
+    content: ''; margin-left: 12px;
+    width: 6px; height: 6px; background: var(--amber); border-radius: 50%;
+    animation: blink 1.2s ease-in-out infinite;
+  }
+  .loaded .loading { display: none; }
+</style>
+</head>
+<body>
+
+<canvas id="starfield"></canvas>
+<div class="grain"></div>
+<div class="film"></div>
+
+<nav class="nav">
+  <div class="mark">
+    <div class="sigil"></div>
+    <a href="index.html" style="color:inherit;text-decoration:none;">Q. Allard</a>
+  </div>
+  <ul>
+    <li><a href="index.html#services">Work</a></li>
+    <li><a href="index.html#realestate">Real Estate</a></li>
+    <li><a href="index.html#fpv">FPV</a></li>
+    <li><a href="#" class="active">Travel</a></li>
+    <li><a href="index.html#contact" style="color:var(--amber)">Book a Shoot</a></li>
+  </ul>
+</nav>
+
+<section class="stage" id="stage">
+  <div class="globe-wrap">
+    <div id="globe"></div>
+    <div class="loading">Rendering atlas</div>
+  </div>
+
+  <div class="overlay">
+    <div class="lede">
+      <div class="eyebrow">Travels</div>
+      <h1 class="display"><em>Travel</em><br/>Log.</h1>
+    </div>
+
+    <aside class="photo-panel" id="photo-panel">
+      <div class="pp-head">
+        <div class="pp-num" id="pp-num">№ 01 / 43</div>
+        <div class="pp-country" id="pp-country">—</div>
+      </div>
+      <div class="pp-frames" id="pp-frames">
+        <div class="pp-frame empty" id="pp-frame-0"><span class="pp-label">01</span></div>
+        <div class="pp-frame empty" id="pp-frame-1"><span class="pp-label">02</span></div>
+        <div class="pp-frame empty" id="pp-frame-2"><span class="pp-label">03</span></div>
+        <div class="pp-frame empty" id="pp-frame-3"><span class="pp-label">04</span></div>
+      </div>
+      <div class="pp-foot">
+        <button id="pp-prev">← prev</button>
+        <button id="pp-next">next →</button>
+      </div>
+    </aside>
+
+    <div class="location-card" id="loc-card" style="display:none">
+      <span class="corner tl"></span>
+      <span class="corner tr"></span>
+      <span class="corner bl"></span>
+      <span class="corner br"></span>
+      <div class="hdr">
+        <span>Now Viewing</span>
+        <span id="loc-idx">01 / 43</span>
+      </div>
+      <div class="name" id="loc-name">Kyoto</div>
+      <div class="sub" id="loc-country">Japan</div>
+      <div class="coords">
+        <span id="loc-lat">35.01° N</span> &nbsp;·&nbsp;
+        <span id="loc-lon">135.76° E</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="compass">
+    <div class="ring"></div>
+    <div class="needle"></div>
+    <div class="n">N</div><div class="s">S</div><div class="e">E</div><div class="w">W</div>
+  </div>
+  <div class="tick"><span class="dot"></span>LIVE TERMINATOR · UTC <span id="utc">--:--</span></div>
+</section>
+
+
+
+<!-- Tweaks panel -->
+<div class="tweaks" id="tweaks">
+  <h4>Tweaks <span style="color:var(--ink-fade)">v1</span></h4>
+  <div class="row">
+    <label>Sepia grade</label>
+    <input type="range" id="tw-sepia" min="0" max="0.6" step="0.01" value="0.18">
+  </div>
+  <div class="row">
+    <label>Atmosphere</label>
+    <input type="range" id="tw-glow" min="0" max="2.5" step="0.05" value="1.0">
+  </div>
+  <div class="row">
+    <label>Auto-rotate</label>
+    <button id="tw-rotate" class="on">ON</button>
+  </div>
+  <div class="row">
+    <label>Night lights</label>
+    <button id="tw-night" class="on">ON</button>
+  </div>
+  <div class="row">
+    <label>Travel arcs</label>
+    <button id="tw-arcs" class="on">ON</button>
+  </div>
+  <div class="row">
+    <label>Planes</label>
+    <button id="tw-planes" class="on">ON</button>
+  </div>
+  <div class="row">
+    <label>Film grain</label>
+    <button id="tw-grain" class="on">ON</button>
+  </div>
+</div>
+
+<!-- Three.js + our modules -->
+<script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+<script>
+// 43 visited countries with approximate lat/long (capital or signature city)
+window.TRAVEL_LOCATIONS = [
+  { name: "United States",    city: "New York",      lat: 40.7128,  lon: -74.0060 },
+  { name: "Mexico",            city: "Mexico City",   lat: 19.4326,  lon: -99.1332 },
+  { name: "Canada",            city: "Toronto",       lat: 43.6532,  lon: -79.3832 },
+  { name: "Haiti",             city: "Port-au-Prince",lat: 18.5944,  lon: -72.3074 },
+  { name: "Spain",             city: "Barcelona",     lat: 41.3874,  lon:   2.1686 },
+  { name: "France",            city: "Paris",         lat: 48.8566,  lon:   2.3522 },
+  { name: "Monaco",            city: "Monte Carlo",   lat: 43.7384,  lon:   7.4246 },
+  { name: "England",           city: "London",        lat: 51.5074,  lon:  -0.1278 },
+  { name: "Italy",             city: "Rome",          lat: 41.9028,  lon:  12.4964 },
+  { name: "Vatican City",      city: "Vatican",       lat: 41.9029,  lon:  12.4534 },
+  { name: "Ireland",           city: "Dublin",        lat: 53.3498,  lon:  -6.2603 },
+  { name: "Czech Republic",    city: "Prague",        lat: 50.0755,  lon:  14.4378 },
+  { name: "Germany",           city: "Berlin",        lat: 52.5200,  lon:  13.4050 },
+  { name: "Indonesia",         city: "Bali",          lat: -8.3405,  lon: 115.0920 },
+  { name: "Singapore",         city: "Singapore",     lat:  1.3521,  lon: 103.8198 },
+  { name: "Malaysia",          city: "Kuala Lumpur",  lat:  3.1390,  lon: 101.6869 },
+  { name: "Thailand",          city: "Bangkok",       lat: 13.7563,  lon: 100.5018 },
+  { name: "Sri Lanka",         city: "Colombo",       lat:  6.9271,  lon:  79.8612 },
+  { name: "UAE",               city: "Dubai",         lat: 25.2048,  lon:  55.2708 },
+  { name: "Greece",            city: "Athens",        lat: 37.9838,  lon:  23.7275 },
+  { name: "Serbia",            city: "Belgrade",      lat: 44.7866,  lon:  20.4489 },
+  { name: "Croatia",           city: "Dubrovnik",     lat: 42.6507,  lon:  18.0944 },
+  { name: "Slovenia",          city: "Ljubljana",     lat: 46.0569,  lon:  14.5058 },
+  { name: "Austria",           city: "Vienna",        lat: 48.2082,  lon:  16.3738 },
+  { name: "Slovakia",          city: "Bratislava",    lat: 48.1486,  lon:  17.1077 },
+  { name: "Hungary",           city: "Budapest",      lat: 47.4979,  lon:  19.0402 },
+  { name: "Scotland",          city: "Edinburgh",     lat: 55.9533,  lon:  -3.1883 },
+  { name: "Denmark",           city: "Copenhagen",    lat: 55.6761,  lon:  12.5683 },
+  { name: "Sweden",            city: "Stockholm",     lat: 59.3293,  lon:  18.0686 },
+  { name: "Poland",            city: "Warsaw",        lat: 52.2297,  lon:  21.0122 },
+  { name: "Belgium",           city: "Brussels",      lat: 50.8503,  lon:   4.3517 },
+  { name: "Netherlands",       city: "Amsterdam",     lat: 52.3676,  lon:   4.9041 },
+  { name: "Romania",           city: "Bucharest",     lat: 44.4268,  lon:  26.1025 },
+  { name: "Moldova",           city: "Chișinău",      lat: 47.0105,  lon:  28.8638 },
+  { name: "Transnistria",      city: "Tiraspol",      lat: 46.8403,  lon:  29.6433 },
+  { name: "Turkey",            city: "Istanbul",      lat: 41.0082,  lon:  28.9784 },
+  { name: "Vietnam",            city: "Hanoi",         lat: 21.0285,  lon: 105.8542 },
+  { name: "Cambodia",          city: "Siem Reap",     lat: 13.3671,  lon: 103.8448 },
+  { name: "Philippines",       city: "Manila",        lat: 14.5995,  lon: 120.9842 },
+  { name: "Japan",             city: "Tokyo",         lat: 35.6762,  lon: 139.6503 },
+  { name: "South Korea",       city: "Seoul",         lat: 37.5665,  lon: 126.9780 },
+  { name: "China",             city: "Shanghai",      lat: 31.2304,  lon: 121.4737 },
+  { name: "Taiwan",            city: "Taipei",        lat: 25.0330,  lon: 121.5654 }
+];
+
+</script>
+<script>
+// Globe built with Three.js. Procedural continents via equirectangular bitmap
+// generated from a coastline dataset encoded below. Sepia day/night shader,
+// atmospheric fresnel glow, pins + great-circle arcs.
+(function () {
+  const TAU = Math.PI * 2;
+
+
+  // ---------- Globe class ----------
+  class Globe {
+    constructor(container, opts = {}) {
+      this.container = container;
+      this.opts = Object.assign({
+        radius: 1,
+        autoRotate: true,
+        rotateSpeed: 0.05,
+        sunLongitude: 20,   // degrees east
+        showArcs: true,
+        showNight: true
+      }, opts);
+
+      this.scene = new THREE.Scene();
+      this.camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
+      this.camera.position.set(0, 0, 4.2);
+
+      this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      this.renderer.setClearColor(0x000000, 0);
+      this.container.appendChild(this.renderer.domElement);
+
+      this.group = new THREE.Group();
+      this.scene.add(this.group);
+
+      const loader = new THREE.TextureLoader();
+      this.dayTex = loader.load('https://unpkg.com/three-globe/example/img/earth-day.jpg');
+      this.dayTex.colorSpace = THREE.SRGBColorSpace;
+      this.dayTex.anisotropy = 8;
+      this.nightTex = loader.load('https://unpkg.com/three-globe/example/img/earth-night.jpg');
+      this.nightTex.colorSpace = THREE.SRGBColorSpace;
+
+      // Earth sphere with custom shader (day/night mix)
+      const earthGeo = new THREE.SphereGeometry(this.opts.radius, 96, 96);
+      const earthMat = new THREE.ShaderMaterial({
+        uniforms: {
+          uDay: { value: this.dayTex },
+          uNight: { value: this.nightTex },
+          uSunDir: { value: new THREE.Vector3(1, 0.1, 0.3).normalize() },
+          uShowNight: { value: this.opts.showNight ? 1 : 0 },
+          uSepia: { value: 0.08 }
+        },
+        vertexShader: `
+          varying vec2 vUv;
+          varying vec3 vNormal;
+          varying vec3 vPos;
+          void main() {
+            vUv = uv;
+            vNormal = normalize(normalMatrix * normal);
+            vec4 wp = modelMatrix * vec4(position, 1.0);
+            vPos = wp.xyz;
+            gl_Position = projectionMatrix * viewMatrix * wp;
+          }
+        `,
+        fragmentShader: `
+          uniform sampler2D uDay;
+          uniform sampler2D uNight;
+          uniform vec3 uSunDir;
+          uniform float uShowNight;
+          uniform float uSepia;
+          varying vec2 vUv;
+          varying vec3 vNormal;
+          varying vec3 vPos;
+
+          void main() {
+            // world-space normal (rotate with model)
+            vec3 n = normalize((vec4(normalize(vPos), 0.0)).xyz);
+            float lambert = dot(n, uSunDir);
+            float day = smoothstep(-0.65, -0.2, lambert);
+
+            vec3 d = texture2D(uDay, vUv).rgb;
+            vec3 night = texture2D(uNight, vUv).rgb;
+
+            // dusk warm tint
+            float dusk = 1.0 - abs(lambert);
+            dusk = pow(dusk, 3.0);
+            vec3 duskTint = vec3(0.70, 0.78, 0.88) * dusk * 0.28;
+
+            // shadowed side: deep umber + city lights
+            vec3 shadow = d * 0.06 + vec3(0.02, 0.015, 0.01);
+            vec3 lights = night * (1.0 - day) * uShowNight * 1.6;
+
+            vec3 col = mix(shadow, d, day);
+            col += duskTint * (1.0 - day) * day * 4.0; // rim at terminator
+            col += lights;
+
+            // warm grade (not full sepia) — preserves hue, lifts warmth
+            float lum = dot(col, vec3(0.299, 0.587, 0.114));
+            vec3 sep = vec3(lum * 1.05, lum * 0.85, lum * 0.6);
+            // blend warm tint with desaturation, but don't fully crush hue
+            vec3 warmed = mix(col, col * vec3(1.08, 0.98, 0.82), 0.5);
+            col = mix(warmed, sep, uSepia * 0.55);
+
+            // gentle vignette via fresnel-ish
+            float edge = pow(1.0 - clamp(dot(normalize(vNormal), vec3(0.0,0.0,1.0)), 0.0, 1.0), 2.0);
+            col *= 1.0 - edge * 0.25;
+
+            gl_FragColor = vec4(col, 1.0);
+          }
+        `
+      });
+      this.earth = new THREE.Mesh(earthGeo, earthMat);
+      this.group.add(this.earth);
+
+      // Atmosphere glow (backside fresnel)
+      const atmoGeo = new THREE.SphereGeometry(this.opts.radius * 1.14, 64, 64);
+      const atmoMat = new THREE.ShaderMaterial({
+        side: THREE.BackSide,
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        uniforms: {
+          uColor: { value: new THREE.Color('#7ea8c8') },
+          uIntensity: { value: 1.0 }
+        },
+        vertexShader: `
+          varying vec3 vNormal;
+          void main() {
+            vNormal = normalize(normalMatrix * normal);
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `,
+        fragmentShader: `
+          uniform vec3 uColor;
+          uniform float uIntensity;
+          varying vec3 vNormal;
+          void main() {
+            float i = pow(0.75 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 3.0);
+            gl_FragColor = vec4(uColor, 1.0) * i * uIntensity;
+          }
+        `
+      });
+      this.atmosphere = new THREE.Mesh(atmoGeo, atmoMat);
+      this.group.add(this.atmosphere);
+
+      // inner rim for warmth
+      const rimGeo = new THREE.SphereGeometry(this.opts.radius * 1.012, 96, 96);
+      const rimMat = new THREE.ShaderMaterial({
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        uniforms: { uColor: { value: new THREE.Color('#c9dbe8') } },
+        vertexShader: `
+          varying vec3 vNormal;
+          void main() {
+            vNormal = normalize(normalMatrix * normal);
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `,
+        fragmentShader: `
+          uniform vec3 uColor;
+          varying vec3 vNormal;
+          void main() {
+            float f = pow(1.0 - dot(vNormal, vec3(0.0,0.0,1.0)), 4.0);
+            gl_FragColor = vec4(uColor, f * 0.8);
+          }
+        `
+      });
+      this.rim = new THREE.Mesh(rimGeo, rimMat);
+      this.group.add(this.rim);
+
+      // Star field
+      this.stars = this._makeStars();
+      this.scene.add(this.stars);
+      // planes (small paper-plane sprites orbiting above surface)
+      this.planes = this._makePlanes();
+      this.group.add(this.planes.group);
+
+
+      // Pin + arc groups
+      this.pinGroup = new THREE.Group();
+      this.arcGroup = new THREE.Group();
+      this.group.add(this.pinGroup);
+      this.group.add(this.arcGroup);
+
+      // Interaction
+      this._initInteraction();
+
+      // Resize
+      this._onResize = this._onResize.bind(this);
+      window.addEventListener('resize', this._onResize);
+      this._onResize();
+
+      this.clock = new THREE.Clock();
+      this._tick = this._tick.bind(this);
+      requestAnimationFrame(this._tick);
+
+      this.raycaster = new THREE.Raycaster();
+      this.mouse = new THREE.Vector2(-2, -2);
+      this.container.addEventListener('pointermove', (e) => {
+        const r = this.container.getBoundingClientRect();
+        this.mouse.x = ((e.clientX - r.left) / r.width) * 2 - 1;
+        this.mouse.y = -((e.clientY - r.top) / r.height) * 2 + 1;
+      });
+    }
+
+    _makeStars() {
+      const g = new THREE.BufferGeometry();
+      const N = 1600;
+      const pos = new Float32Array(N * 3);
+      const col = new Float32Array(N * 3);
+      for (let i = 0; i < N; i++) {
+        // on a far sphere
+        const u = Math.random(), v = Math.random();
+        const theta = u * TAU;
+        const phi = Math.acos(2 * v - 1);
+        const r = 25 + Math.random() * 10;
+        pos[i*3  ] = r * Math.sin(phi) * Math.cos(theta);
+        pos[i*3+1] = r * Math.cos(phi);
+        pos[i*3+2] = r * Math.sin(phi) * Math.sin(theta);
+        const warm = 0.6 + Math.random() * 0.4;
+        col[i*3  ] = warm;
+        col[i*3+1] = warm * (0.75 + Math.random() * 0.2);
+        col[i*3+2] = warm * (0.5 + Math.random() * 0.2);
+      }
+      g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+      g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+      const m = new THREE.PointsMaterial({
+        size: 0.06, sizeAttenuation: true, vertexColors: true,
+        transparent: true, opacity: 0.85, depthWrite: false
+      });
+      return new THREE.Points(g, m);
+    }
+
+    // ---- lat/lon → unit vector ----
+    static llToVec(lat, lon, r = 1) {
+      const phi = (90 - lat) * Math.PI / 180;
+      const theta = (lon + 180) * Math.PI / 180;
+      const x = -r * Math.sin(phi) * Math.cos(theta);
+      const z = r * Math.sin(phi) * Math.sin(theta);
+      const y = r * Math.cos(phi);
+      return new THREE.Vector3(x, y, z);
+    }
+
+    setLocations(locs) {
+      this.locations = locs;
+      this.pins = [];
+      // pin mesh pool
+      const pinGeo = new THREE.SphereGeometry(0.009, 12, 12);
+      const pinMat = new THREE.MeshBasicMaterial({ color: 0xf2e6c2 });
+      for (const loc of locs) {
+        const v = Globe.llToVec(loc.lat, loc.lon, this.opts.radius * 1.005);
+        const m = new THREE.Mesh(pinGeo, pinMat.clone());
+        m.position.copy(v);
+        m.userData = { loc, base: 0.009 };
+        this.pinGroup.add(m);
+
+        // halo sprite
+        const halo = this._haloSprite();
+        halo.position.copy(v.clone().multiplyScalar(1.002));
+        halo.userData = { loc };
+        this.pinGroup.add(halo);
+
+        // thin stem
+        const stemGeo = new THREE.CylinderGeometry(0.001, 0.001, 0.025, 6);
+        const stemMat = new THREE.MeshBasicMaterial({ color: 0xe6ddc2, transparent: true, opacity: 0.55 });
+        const stem = new THREE.Mesh(stemGeo, stemMat);
+        const stemPos = v.clone().multiplyScalar(1.012);
+        stem.position.copy(stemPos);
+        stem.lookAt(v.clone().multiplyScalar(2));
+        stem.rotateX(Math.PI / 2);
+        this.pinGroup.add(stem);
+
+        this.pins.push({ mesh: m, halo, stem, loc });
+      }
+
+      // Arcs connecting consecutive locations (travel journey)
+      if (this.opts.showArcs) this._buildArcs(locs);
+    }
+
+
+    _makePlanes() {
+      const group = new THREE.Group();
+      // canvas texture for a tiny, warm-ivory plane silhouette
+      const size = 64;
+      const c = document.createElement('canvas'); c.width = c.height = size;
+      const g = c.getContext('2d');
+      g.clearRect(0, 0, size, size);
+      g.fillStyle = '#f2e6c2';
+      // body
+      g.beginPath();
+      g.moveTo(32, 6);
+      g.lineTo(36, 34);
+      g.lineTo(32, 58);
+      g.lineTo(28, 34);
+      g.closePath();
+      g.fill();
+      // wings
+      g.fillStyle = '#e8dcb4';
+      g.beginPath();
+      g.moveTo(32, 30); g.lineTo(8, 40); g.lineTo(32, 38); g.closePath(); g.fill();
+      g.beginPath();
+      g.moveTo(32, 30); g.lineTo(56, 40); g.lineTo(32, 38); g.closePath(); g.fill();
+      // tail
+      g.fillStyle = '#f2e6c2';
+      g.beginPath();
+      g.moveTo(32, 54); g.lineTo(26, 60); g.lineTo(32, 58); g.lineTo(38, 60); g.closePath(); g.fill();
+
+      const tex = new THREE.CanvasTexture(c);
+      tex.colorSpace = THREE.SRGBColorSpace;
+
+      const N = 5;
+      const items = [];
+      for (let i = 0; i < N; i++) {
+        const mat = new THREE.SpriteMaterial({
+          map: tex, transparent: true, depthWrite: false, opacity: 0.85
+        });
+        const s = new THREE.Sprite(mat);
+        s.scale.set(0.08, 0.08, 1);
+
+        // random orbit: a tilted great circle at altitude r
+        const alt = 1.18 + Math.random() * 0.08;
+        // normal to orbit plane
+        const nVec = new THREE.Vector3(
+          Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5
+        ).normalize();
+        // basis in plane
+        const up = Math.abs(nVec.y) < 0.9 ? new THREE.Vector3(0,1,0) : new THREE.Vector3(1,0,0);
+        const uVec = new THREE.Vector3().crossVectors(nVec, up).normalize();
+        const vVec = new THREE.Vector3().crossVectors(nVec, uVec).normalize();
+
+        const speed = 0.05 + Math.random() * 0.06;
+        const phase = Math.random() * Math.PI * 2;
+
+        // trail
+        const trailGeo = new THREE.BufferGeometry();
+        const trailLen = 40;
+        const tPos = new Float32Array(trailLen * 3);
+        trailGeo.setAttribute('position', new THREE.BufferAttribute(tPos, 3));
+        const alpha = new Float32Array(trailLen);
+        for (let k = 0; k < trailLen; k++) alpha[k] = 1 - k / trailLen;
+        const trailMat = new THREE.LineBasicMaterial({
+          color: 0xe6ddc2, transparent: true, opacity: 0.35, depthWrite: false
+        });
+        const trail = new THREE.Line(trailGeo, trailMat);
+
+        group.add(s);
+        group.add(trail);
+        items.push({ sprite: s, alt, uVec, vVec, nVec, speed, phase, trail, tPos, trailLen, history: [] });
+      }
+      return { group, items };
+    }
+
+    _haloSprite() {
+      const size = 128;
+      const c = document.createElement('canvas');
+      c.width = c.height = size;
+      const g = c.getContext('2d');
+      const grad = g.createRadialGradient(size/2, size/2, 0, size/2, size/2, size/2);
+      grad.addColorStop(0,   'rgba(245,235,205,0.95)');
+      grad.addColorStop(0.3, 'rgba(220,205,165,0.45)');
+      grad.addColorStop(1,   'rgba(220,205,165,0)');
+      g.fillStyle = grad;
+      g.fillRect(0, 0, size, size);
+      const tex = new THREE.CanvasTexture(c);
+      const m = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending });
+      const s = new THREE.Sprite(m);
+      s.scale.set(0.055, 0.055, 1);
+      return s;
+    }
+
+    _buildArcs(locs) {
+      // Connect in a loop in visit-order feel (we don't know order; go by index)
+      const mat = new THREE.LineBasicMaterial({
+        color: 0xe6ddc2, transparent: true, opacity: 0.32, depthWrite: false
+      });
+      for (let i = 0; i < locs.length - 1; i++) {
+        const a = Globe.llToVec(locs[i].lat, locs[i].lon, this.opts.radius);
+        const b = Globe.llToVec(locs[i+1].lat, locs[i+1].lon, this.opts.radius);
+        const curve = this._greatCircle(a, b);
+        const geo = new THREE.BufferGeometry().setFromPoints(curve);
+        const line = new THREE.Line(geo, mat);
+        line.userData.points = curve.length;
+        this.arcGroup.add(line);
+      }
+    }
+
+    _greatCircle(a, b) {
+      const pts = [];
+      const steps = 48;
+      const dist = a.distanceTo(b);
+      const arcHeight = 0.08 + dist * 0.15;
+      for (let i = 0; i <= steps; i++) {
+        const t = i / steps;
+        // slerp
+        const dot = Math.max(-1, Math.min(1, a.clone().normalize().dot(b.clone().normalize())));
+        const theta = Math.acos(dot);
+        const sinT = Math.sin(theta) || 1;
+        const v = a.clone().multiplyScalar(Math.sin((1 - t) * theta) / sinT)
+          .add(b.clone().multiplyScalar(Math.sin(t * theta) / sinT));
+        // lift into arc
+        const lift = Math.sin(t * Math.PI) * arcHeight;
+        v.normalize().multiplyScalar(this.opts.radius + lift);
+        pts.push(v);
+      }
+      return pts;
+    }
+
+    _initInteraction() {
+      let down = false;
+      let lx = 0, ly = 0;
+      let vx = 0, vy = 0;
+      this.rotX = 0; this.rotY = 0;
+      this._targetRotX = 0; this._targetRotY = 0;
+      const el = this.renderer.domElement;
+      el.style.cursor = 'grab';
+      el.addEventListener('pointerdown', (e) => {
+        down = true; lx = e.clientX; ly = e.clientY;
+        el.style.cursor = 'grabbing';
+        el.setPointerCapture(e.pointerId);
+      });
+      el.addEventListener('pointermove', (e) => {
+        if (!down) return;
+        const dx = e.clientX - lx;
+        const dy = e.clientY - ly;
+        lx = e.clientX; ly = e.clientY;
+        vx = dx * 0.005;
+        vy = dy * 0.005;
+        this._targetRotY += vx;
+        this._targetRotX += vy;
+        this._targetRotX = Math.max(-1.1, Math.min(1.1, this._targetRotX));
+        this._userInteracting = true;
+      });
+      el.addEventListener('pointerup', () => {
+        down = false; el.style.cursor = 'grab';
+        setTimeout(()=> this._userInteracting = false, 2500);
+      });
+      el.addEventListener('pointerleave', () => {
+        down = false; el.style.cursor = 'grab';
+      });
+    }
+
+    focusLocation(loc) {
+      const lat = loc.lat * Math.PI / 180;
+      const lon = loc.lon * Math.PI / 180;
+      const targetRotY = -lon - Math.PI / 2;
+      const targetRotX = lat * 0.6;
+      // shortest-path wrap for Y
+      let dY = targetRotY - this._targetRotY;
+      while (dY > Math.PI) dY -= Math.PI * 2;
+      while (dY < -Math.PI) dY += Math.PI * 2;
+      this._targetRotY += dY;
+      this._targetRotX = targetRotX;
+    }
+
+    _onResize() {
+      const w = this.container.clientWidth;
+      const h = this.container.clientHeight;
+      this.renderer.setSize(w, h, true);
+      this.camera.aspect = w / h;
+      this.camera.updateProjectionMatrix();
+    }
+
+    _tick() {
+      const dt = this.clock.getDelta();
+      const t = this.clock.elapsedTime;
+
+      if (this.opts.autoRotate && !this._userInteracting) {
+        this._targetRotY += dt * this.opts.rotateSpeed;
+      }
+      const lf = 1 - Math.exp(-2.2 * dt);
+      let dY = this._targetRotY - this.rotY;
+      while (dY > Math.PI) dY -= Math.PI * 2;
+      while (dY < -Math.PI) dY += Math.PI * 2;
+      this.rotY += dY * lf;
+      this.rotX += (this._targetRotX - this.rotX) * lf;
+      this.group.rotation.y = this.rotY;
+      this.group.rotation.x = this.rotX;
+      this.group.updateMatrixWorld(true);
+
+      // stars barely drift
+      this.stars.rotation.y = t * 0.005;
+
+      // Pulse halos
+      if (this.pins) {
+        for (let i = 0; i < this.pins.length; i++) {
+          const p = this.pins[i];
+          const ph = (t * 0.8 + i * 0.17) % 1;
+          const pulse = 1 + Math.sin(ph * TAU) * 0.15;
+          p.halo.scale.set(0.055 * pulse, 0.055 * pulse, 1);
+          p.halo.material.opacity = 0.65 + Math.sin(ph * TAU) * 0.2;
+        }
+      }
+
+      // Sun direction — rotate slowly so terminator moves
+      const sunLon = (this.opts.sunLongitude + t * 2) * Math.PI / 180;
+      const sunLat = 15 * Math.PI / 180;
+      const sx = Math.cos(sunLat) * Math.cos(sunLon);
+      const sz = Math.cos(sunLat) * Math.sin(sunLon);
+      const sy = Math.sin(sunLat);
+      // sun in world space; we need it relative to the rotating earth (model space)
+      // since earth rotates with group, invert group rotation:
+      const sun = new THREE.Vector3(sx, sy, sz);
+      const inv = new THREE.Matrix4().makeRotationY(-this.rotY).multiply(new THREE.Matrix4().makeRotationX(-this.rotX));
+      sun.applyMatrix4(inv);
+      this.earth.material.uniforms.uSunDir.value.copy(sun).normalize();
+
+      // planes
+      if (this.planes) {
+        const r = this.opts.radius;
+        for (const p of this.planes.items) {
+          const a = p.phase + t * p.speed;
+          const pos = new THREE.Vector3()
+            .addScaledVector(p.uVec, Math.cos(a) * p.alt)
+            .addScaledVector(p.vVec, Math.sin(a) * p.alt);
+          p.sprite.position.copy(pos);
+          // Compute next orbit position, convert both to world space, project to NDC,
+          // then use 2D screen displacement — handles group rotation correctly.
+          const da = 0.02;
+          const posAhead = new THREE.Vector3()
+            .addScaledVector(p.uVec, Math.cos(a + da) * p.alt)
+            .addScaledVector(p.vVec, Math.sin(a + da) * p.alt);
+          const wPos   = this.group.localToWorld(pos.clone());
+          const wAhead = this.group.localToWorld(posAhead.clone());
+          const sc = wPos.clone().project(this.camera);
+          const sn = wAhead.clone().project(this.camera);
+          const dx = sn.x - sc.x, dy = sn.y - sc.y;
+          if (dx * dx + dy * dy > 1e-8) {
+            p.sprite.material.rotation = Math.atan2(dy, dx) - Math.PI / 2;
+          }
+
+          // trail history
+          p.history.unshift(pos.clone());
+          if (p.history.length > p.trailLen) p.history.length = p.trailLen;
+          for (let k = 0; k < p.trailLen; k++) {
+            const v = p.history[k] || pos;
+            p.tPos[k*3]   = v.x;
+            p.tPos[k*3+1] = v.y;
+            p.tPos[k*3+2] = v.z;
+          }
+          p.trail.geometry.attributes.position.needsUpdate = true;
+        }
+      }
+
+      this.renderer.render(this.scene, this.camera);
+      requestAnimationFrame(this._tick);
+    }
+
+    setSepia(v)   { this.earth.material.uniforms.uSepia.value = v; }
+    setGlow(v)    { this.atmosphere.material.uniforms.uIntensity.value = v; }
+    setAutoRotate(b) { this.opts.autoRotate = b; }
+    setShowNight(b)  { this.earth.material.uniforms.uShowNight.value = b ? 1 : 0; }
+    setShowArcs(b) {
+      this.arcGroup.visible = b;
+    }
+    setShowPlanes(b) {
+      if (this.planes) this.planes.group.visible = b;
+    }
+  }
+
+  window.Globe = Globe;
+})();
+
+</script>
+
+<script>
+const PHOTO_MAP = {
+  "Austria":        ["travel/Austria/IMG_8611.JPG","travel/Austria/IMG_8624.JPG","travel/Austria/IMG_8635.JPG","travel/Austria/IMG_8659.JPG"],
+  "Belgium":        ["travel/Belguim/IMG_1246.jpeg","travel/Belguim/IMG_9319.JPG","travel/Belguim/IMG_9367.JPG","travel/Belguim/IMG_9473.JPG"],
+  "Cambodia":       ["travel/Cambodia/IMG_0103.JPG","travel/Cambodia/IMG_0136.JPG","travel/Cambodia/IMG_0203.JPG","travel/Cambodia/IMG_0222.JPG"],
+  "Canada":         ["travel/Canada/4828A850-9C9E-4658-8BB3-2A8F028A9E98.jpg","travel/Canada/4D0FDB79-BA97-495E-8DFB-9EB961938C9D.jpg","travel/Canada/891A4ABC-6A18-4A23-8DD4-9CACF6C58651.jpg","travel/Canada/IMG_0366.jpeg"],
+  "China":          ["travel/China/IMG_1227.JPG","travel/China/IMG_1269.JPG","travel/China/IMG_1325.JPG","travel/China/IMG_1449.JPG"],
+  "Croatia":        ["travel/Croatia/IMG_8352.JPG","travel/Croatia/IMG_8374.JPG","travel/Croatia/IMG_8375.JPG","travel/Croatia/IMG_8391.JPG"],
+  "Czech Republic": ["travel/Czech Republic/IMG_2860.jpeg","travel/Czech Republic/IMG_2867.jpeg","travel/Czech Republic/IMG_2924.jpeg","travel/Czech Republic/IMG_3248.JPG"],
+  "Denmark":        ["travel/Denmark/IMG_9038.JPG","travel/Denmark/IMG_9045.JPG","travel/Denmark/IMG_9047.JPG","travel/Denmark/IMG_9066.JPG"],
+  "England":        ["travel/England/IMG_8811.JPG","travel/England/IMG_8823.JPG","travel/England/IMG_8832.JPG","travel/England/IMG_8860.JPG"],
+  "France":         ["travel/France/IMG_5510.jpeg","travel/France/IMG_5523.jpeg","travel/France/IMG_5526.jpeg","travel/France/IMG_5540.jpeg"],
+  "Germany":        ["travel/Germany/IMG_3059.jpeg","travel/Germany/IMG_3090.jpeg","travel/Germany/IMG_3112.jpeg","travel/Germany/IMG_3148.jpeg"],
+  "Greece":         ["travel/Greece/IMG_8168.JPG","travel/Greece/IMG_8188.JPG","travel/Greece/IMG_8205.JPG","travel/Greece/IMG_8243.JPG"],
+  "Haiti":          ["travel/Haiti/IMG_5564.jpeg","travel/Haiti/IMG_5565.jpeg","travel/Haiti/IMG_5566.jpeg","travel/Haiti/IMG_5567.jpeg"],
+  "Hungary":        ["travel/Hungary/41CFF760-5A54-4AF3-940C-26B9EB8DCAB6.jpg","travel/Hungary/F928F47E-DEAB-4CC5-B76B-F6C97644240D.jpg","travel/Hungary/IMG_8707.JPG","travel/Hungary/IMG_8716.JPG"],
+  "Indonesia":      ["travel/Indonesia/IMG_1047.jpeg","travel/Indonesia/IMG_1112.jpeg","travel/Indonesia/IMG_6492.JPG","travel/Indonesia/IMG_6557.JPG"],
+  "Ireland":        ["travel/Ireland/IMG_0019.JPG","travel/Ireland/IMG_2723.jpeg","travel/Ireland/IMG_2724.jpeg","travel/Ireland/IMG_3005.jpeg"],
+  "Italy":          ["travel/Italy/IMG_5851.jpeg","travel/Italy/IMG_5869.jpeg","travel/Italy/IMG_5887.jpeg","travel/Italy/IMG_5898.jpeg"],
+  "Japan":          ["travel/Japan/IMG_0956.JPG","travel/Japan/IMG_4388.jpeg","travel/Japan/IMG_4436.jpeg","travel/Japan/IMG_4671.JPG"],
+  "Malaysia":       ["travel/Malaysia/IMG_6794.JPG","travel/Malaysia/IMG_6810.JPG","travel/Malaysia/IMG_6835.JPG","travel/Malaysia/IMG_6838.JPG"],
+  "Moldova":        ["travel/Moldova/9727ddbf-9998-4f58-8d2a-ae9459149d8f.jpg","travel/Moldova/IMG_9498.JPG","travel/Moldova/IMG_9504.JPG","travel/Moldova/IMG_9595.JPG"],
+  "Monaco":         ["travel/Monaco/IMG_5556.jpeg","travel/Monaco/IMG_5557.jpeg","travel/Monaco/IMG_5559.jpeg","travel/Monaco/IMG_5566.jpeg"],
+  "Netherlands":    ["travel/Netherlands/IMG_9455.JPG","travel/Netherlands/IMG_9457.JPG","travel/Netherlands/IMG_9458.JPG","travel/Netherlands/IMG_9462.JPG"],
+  "Philippines":    ["travel/Phillipines/IMG_0312.JPG","travel/Phillipines/IMG_0324.JPG","travel/Phillipines/IMG_0368.JPG","travel/Phillipines/IMG_0378.JPG"],
+  "Poland":         ["travel/Poland/IMG_9161.JPG","travel/Poland/IMG_9170.JPG","travel/Poland/IMG_9185.JPG","travel/Poland/IMG_9225.JPG"],
+  "Romania":        ["travel/Romania/IMG_9487.JPG","travel/Romania/IMG_9489.JPG","travel/Romania/IMG_9490.JPG","travel/Romania/IMG_9495.JPG"],
+  "Scotland":       ["travel/Scotland/IMG_8910.JPG","travel/Scotland/IMG_8952.JPG","travel/Scotland/IMG_8959.JPG","travel/Scotland/f6d7ea5a-d634-4368-9c91-1974344f7bdf.jpg"],
+  "Serbia":         ["travel/Serbia/IMG_8283.JPG","travel/Serbia/IMG_8299.JPG","travel/Serbia/IMG_8303.JPG","travel/Serbia/IMG_8320.JPG"],
+  "Singapore":      ["travel/Singapore/IMG_6480.jpeg","travel/Singapore/IMG_6667.JPG","travel/Singapore/IMG_6676.JPG","travel/Singapore/IMG_6689.JPG"],
+  "Slovakia":       ["travel/Slovakia/IMG_8679.JPG","travel/Slovakia/IMG_8680.JPG","travel/Slovakia/IMG_8682.JPG","travel/Slovakia/IMG_8683.JPG"],
+  "Slovenia":       ["travel/Slovenia/IMG_8413.JPG","travel/Slovenia/IMG_8433.JPG","travel/Slovenia/IMG_8481.JPG","travel/Slovenia/IMG_8536.JPG"],
+  "South Korea":    ["travel/South Korea/IMG_1132.JPG","travel/South Korea/IMG_1140.JPG","travel/South Korea/IMG_1157.JPG","travel/South Korea/a9cc56b7-499f-437b-a3dc-d1d538c33b35.jpg"],
+  "Spain":          ["travel/Spain/52A75816-AACD-4EB2-A58E-5093A63C1382.jpg","travel/Spain/IMG_5236.jpeg","travel/Spain/IMG_5360.jpeg","travel/Spain/IMG_5398.jpeg"],
+  "Sri Lanka":      ["travel/Sri Lanka/IMG_0021.jpeg","travel/Sri Lanka/IMG_7390.JPG","travel/Sri Lanka/IMG_7677.JPG","travel/Sri Lanka/IMG_7744.JPG"],
+  "Sweden":         ["travel/Sweden/IMG_9113.JPG","travel/Sweden/IMG_9129.JPG","travel/Sweden/IMG_9139.JPG","travel/Sweden/IMG_9141.JPG"],
+  "Taiwan":         ["travel/Taiwan/IMG_1500.JPG","travel/Taiwan/IMG_1554.JPG","travel/Taiwan/IMG_1579.JPG","travel/Taiwan/IMG_1589.JPG"],
+  "Thailand":       ["travel/Thailand/IMG_6934.JPG","travel/Thailand/IMG_7096.JPG","travel/Thailand/IMG_7172.JPG","travel/Thailand/IMG_7195.JPG"],
+  "Transnistria":   ["travel/Transnistria/7f63663c-ac11-42b0-9983-08900681794d.jpg","travel/Transnistria/IMG_9517.JPG","travel/Transnistria/IMG_9576.JPG","travel/Transnistria/IMG_9583.JPG"],
+  "Turkey":         ["travel/Turkey/IMG_9617.JPG","travel/Turkey/IMG_9627.JPG","travel/Turkey/IMG_9633.JPG","travel/Turkey/IMG_9649.JPG"],
+  "UAE":            ["travel/UAE/IMG_8048.JPG","travel/UAE/IMG_8053.JPG","travel/UAE/IMG_8081.JPG","travel/UAE/IMG_8090.JPG"],
+  "United States":  ["travel/United States/5FCC62B6-9635-4288-B627-567A6E9F264A.JPG","travel/United States/Horseshoe stioll.jpeg","travel/United States/IMG_0800.JPG","travel/United States/IMG_5693.jpeg"],
+  "Vietnam":        ["travel/Vietnam/IMG_0038.JPG","travel/Vietnam/IMG_9830.JPG","travel/Vietnam/IMG_9999.JPG","travel/Vietnam/d23bb145-1856-460e-a67d-c4f99d207327.jpg"],
+  "Mexico":         ["travel/Mexico/IMG_1038.jpeg","travel/Mexico/IMG_1058.jpeg","travel/Mexico/IMG_1070.jpeg","travel/Mexico/IMG_1118.jpeg"],
+  "Vatican City":   ["travel/Vatican City/IMG_9269.JPG","travel/Vatican City/IMG_9275.JPG","travel/Vatican City/IMG_9284.JPG","travel/Vatican City/IMG_9285.JPG"],
+};
+</script>
+
+<script>
+(function () {
+  const stage = document.getElementById('stage');
+  const locs = window.TRAVEL_LOCATIONS;
+
+  // ---- stats ---- (kept minimal)
+
+  // photo panel wiring (no country index grid)
+
+  // ---- globe ----
+  const globeEl = document.getElementById('globe');
+  const globe = new window.Globe(globeEl, {
+    radius: 1,
+    autoRotate: true,
+    rotateSpeed: 0.06
+  });
+  globe.setLocations(locs);
+  stage.classList.add('loaded');
+
+  // Initial focus: a warm, welcoming frame
+  globe.rotX = 0.2;  globe.rotY = -0.6;
+  globe._targetRotX = 0.2; globe._targetRotY = -0.6;
+
+  // cycle featured location
+  let featured = 0;
+  function fmtLat(lat) {
+    const d = Math.abs(lat).toFixed(2);
+    return `${d}° ${lat >= 0 ? 'N' : 'S'}`;
+  }
+  function fmtLon(lon) {
+    const d = Math.abs(lon).toFixed(2);
+    return `${d}° ${lon >= 0 ? 'E' : 'W'}`;
+  }
+  function updatePhotos(countryName) {
+    const photos = PHOTO_MAP[countryName] || [];
+    for (let i = 0; i < 4; i++) {
+      const frame = document.getElementById('pp-frame-' + i);
+      if (!frame) continue;
+      if (photos[i]) {
+        frame.classList.remove('empty');
+        // remove existing img if any
+        const existingImg = frame.querySelector('img');
+        if (existingImg) existingImg.remove();
+        const img = document.createElement('img');
+        img.src = encodeURI(photos[i]);
+        img.alt = countryName + ' photo ' + (i + 1);
+        img.loading = 'lazy';
+        frame.appendChild(img);
+      } else {
+        frame.classList.add('empty');
+        const existingImg = frame.querySelector('img');
+        if (existingImg) existingImg.remove();
+      }
+    }
+  }
+
+  function updateCard(l, i) {
+    const n = String(i+1).padStart(2,'0');
+    const total = String(locs.length).padStart(2,'0');
+    const pNum = document.getElementById('pp-num');
+    const pC   = document.getElementById('pp-country');
+    const pCi  = document.getElementById('pp-city');
+    if (pNum) pNum.textContent = `№ ${n} / ${total}`;
+    if (pC)   pC.textContent   = l.name;
+    if (pCi)  pCi.textContent  = l.city;
+    featured = i;
+    updatePhotos(l.name);
+  }
+  updateCard(locs[0], 0);
+  updatePhotos(locs[0].name);
+
+  // Prev / Next buttons
+  function goTo(i) {
+    const n = (i + locs.length) % locs.length;
+    globe.focusLocation(locs[n]);
+    setTimeout(() => updateCard(locs[n], n), 900);
+  }
+  document.getElementById('pp-prev').addEventListener('click', () => goTo(featured - 1));
+  document.getElementById('pp-next').addEventListener('click', () => goTo(featured + 1));
+
+  // Auto-cycle when user is idle
+  let idleTimer = setInterval(() => {
+    if (globe._userInteracting) return;
+    featured = (featured + 1) % locs.length;
+    globe.focusLocation(locs[featured]);
+    setTimeout(() => updateCard(locs[featured], featured), 1400);
+  }, 7000);
+
+  // UTC clock
+  function tickClock() {
+    const d = new Date();
+    const hh = String(d.getUTCHours()).padStart(2, '0');
+    const mm = String(d.getUTCMinutes()).padStart(2, '0');
+    document.getElementById('utc').textContent = `${hh}:${mm}`;
+  }
+  tickClock(); setInterval(tickClock, 30000);
+
+  // ====== Tweaks ======
+  const TWEAK_DEFAULS = /*EDITMODE-BEGIN*/{
+    "sepia": 0.3,
+    "glow": 1.75,
+    "autoRotate": true,
+    "night": true,
+    "arcs": true,
+    "grain": true
+  }/*EDITMODE-END*/;
+
+  const state = Object.assign({}, TWEAK_DEFAULS);
+
+  function apply() {
+    globe.setSepia(state.sepia);
+    globe.setGlow(state.glow);
+    globe.setAutoRotate(state.autoRotate);
+    globe.setShowNight(state.night);
+    globe.setShowArcs(state.arcs);
+    globe.setShowPlanes(state.planes !== false);
+    document.querySelector('.grain').style.display = state.grain ? 'block' : 'none';
+    // update UI controls to reflect state
+    const sepia = document.getElementById('tw-sepia');
+    const glow = document.getElementById('tw-glow');
+    if (sepia) sepia.value = state.sepia;
+    if (glow) glow.value = state.glow;
+    toggleBtn('tw-rotate', state.autoRotate);
+    toggleBtn('tw-night', state.night);
+    toggleBtn('tw-arcs', state.arcs);
+    toggleBtn('tw-planes', state.planes !== false);
+    toggleBtn('tw-grain', state.grain);
+  }
+  function toggleBtn(id, v) {
+    const b = document.getElementById(id);
+    if (!b) return;
+    b.classList.toggle('on', !!v);
+    b.textContent = v ? 'ON' : 'OFF';
+  }
+  function persist(keys) {
+    window.parent.postMessage({ type: '__edit_mode_set_keys', edits: keys }, '*');
+  }
+
+  document.getElementById('tw-sepia').addEventListener('input', e => {
+    state.sepia = +e.target.value; apply(); persist({ sepia: state.sepia });
+  });
+  document.getElementById('tw-glow').addEventListener('input', e => {
+    state.glow = +e.target.value; apply(); persist({ glow: state.glow });
+  });
+  document.getElementById('tw-rotate').addEventListener('click', () => {
+    state.autoRotate = !state.autoRotate; apply(); persist({ autoRotate: state.autoRotate });
+  });
+  document.getElementById('tw-night').addEventListener('click', () => {
+    state.night = !state.night; apply(); persist({ night: state.night });
+  });
+  document.getElementById('tw-arcs').addEventListener('click', () => {
+    state.arcs = !state.arcs; apply(); persist({ arcs: state.arcs });
+  });
+  document.getElementById('tw-planes').addEventListener('click', () => {
+    state.planes = !state.planes; apply(); persist({ planes: state.planes });
+  });
+  document.getElementById('tw-grain').addEventListener('click', () => {
+    state.grain = !state.grain; apply(); persist({ grain: state.grain });
+  });
+
+  apply();
+
+  // Tweaks host protocol — register listener FIRST, then announce.
+  window.addEventListener('message', (e) => {
+    const d = e.data || {};
+    if (d.type === '__activate_edit_mode') document.getElementById('tweaks').classList.add('open');
+    if (d.type === '__deactivate_edit_mode') document.getElementById('tweaks').classList.remove('open');
+  });
+  window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+})();
+</script>
+
+
+<script>
+(function () {
+  const canvas = document.getElementById('starfield');
+  const ctx    = canvas.getContext('2d');
+  let stars    = [];
+
+  function resize() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+    buildStars();
+  }
+
+  function buildStars() {
+    stars = [];
+    const count = Math.floor((canvas.width * canvas.height) / 6000);
+    for (let i = 0; i < count; i++) {
+      stars.push({
+        x:      Math.random() * canvas.width,
+        y:      Math.random() * canvas.height,
+        r:      0.6 + Math.random() * 1.6,
+        phase:  Math.random() * Math.PI * 2,
+        speed:  0.3 + Math.random() * 0.7,
+        base:   0.5 + Math.random() * 0.35,
+      });
+    }
+  }
+
+  function draw(t) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const sec = t * 0.001;
+    for (const s of stars) {
+      const alpha = s.base + (1 - s.base) * 0.5 * (1 + Math.sin(sec * s.speed + s.phase));
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle   = '#e8e1cc';
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+  requestAnimationFrame(draw);
+})();
+</script>
+</body>
+</html>

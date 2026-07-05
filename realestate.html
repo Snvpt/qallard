@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Real Estate Photography — Quinn Allard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #080808;
+      --surface:   #111111;
+      --border:    rgba(255,255,255,0.07);
+      --text:      #e8e2d9;
+      --muted:     #6b6560;
+      --accent:    #c8a96e;
+      --accent-dim:#8a6f3e;
+      --white:     #f5f0e8;
+      --radius:    2.5rem;
+      --ease-out:  cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── Grain overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      background-size: 200px;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.35;
+    }
+
+    /* ── Typography ── */
+    .serif { font-family: 'Playfair Display', serif; }
+    h1, h2, h3 { font-family: 'Playfair Display', serif; font-weight: 400; }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 3rem;
+    }
+
+    nav::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(8,8,8,0.9) 0%, transparent 100%);
+      pointer-events: none;
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      letter-spacing: 0.08em;
+      color: var(--white);
+      text-decoration: none;
+      position: relative;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+      position: relative;
+    }
+
+    .nav-links a {
+      color: var(--white);
+      text-decoration: none;
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.3s;
+      text-shadow: 0 1px 6px rgba(0,0,0,0.6);
+    }
+
+    .nav-links a:hover { color: var(--accent); }
+
+    .nav-links a.active {
+      color: var(--accent);
+    }
+
+    .nav-cta {
+      position: relative;
+      border: 1px solid var(--border);
+      padding: 0.55rem 1.4rem;
+      border-radius: 100px;
+      color: var(--accent) !important;
+      transition: border-color 0.3s, background 0.3s !important;
+    }
+
+    .nav-cta:hover {
+      border-color: var(--accent) !important;
+      background: rgba(200,169,110,0.08) !important;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 10rem 3rem 6rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 40%, rgba(200,169,110,0.06) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 80% at 20% 80%, rgba(200,169,110,0.03) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 2rem;
+      position: relative;
+    }
+
+    .hero-eyebrow::before,
+    .hero-eyebrow::after {
+      content: '';
+      display: block;
+      width: 2.5rem;
+      height: 1px;
+      background: var(--accent);
+      opacity: 0.6;
+    }
+
+    .hero-title {
+      font-size: clamp(3.5rem, 8vw, 8rem);
+      line-height: 0.95;
+      letter-spacing: -0.03em;
+      color: var(--white);
+      margin-bottom: 1rem;
+      position: relative;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--accent);
+      display: block;
+    }
+
+    .hero-subtitle {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1rem, 2vw, 1.3rem);
+      color: rgba(232,226,217,0.45);
+      font-style: italic;
+      margin-bottom: 3rem;
+      font-weight: 300;
+      letter-spacing: 0.04em;
+    }
+
+    .hero-meta {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      position: relative;
+    }
+
+    .hero-meta-sep {
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: 0.5;
+      flex-shrink: 0;
+    }
+
+    .hero-rule {
+      width: 1px;
+      height: 5rem;
+      background: linear-gradient(to bottom, transparent, rgba(200,169,110,0.4), transparent);
+      margin: 3.5rem auto 0;
+      position: relative;
+    }
+
+    /* ── Listings Grid ── */
+    .listings-section {
+      padding: 5rem 3rem 8rem;
+    }
+
+    .listings-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 4rem;
+    }
+
+    .section-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    .section-tag::before {
+      content: '';
+      display: block;
+      width: 2rem;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--white);
+    }
+
+    .listings-count {
+      font-size: 0.78rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    .listings-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    /* ── Listing Card ── */
+    .listing-card {
+      position: relative;
+      border-radius: 1.5rem;
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: border-color 0.4s, transform 0.5s var(--ease-out), box-shadow 0.5s var(--ease-out);
+    }
+
+    .listing-card:hover {
+      border-color: rgba(200,169,110,0.25);
+      transform: translateY(-6px);
+      box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(200,169,110,0.08);
+    }
+
+    .listing-cover-wrap {
+      position: relative;
+      aspect-ratio: 4/3;
+      overflow: hidden;
+    }
+
+    .listing-cover {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.8s var(--ease-out), filter 0.5s;
+      filter: brightness(0.82) saturate(0.9);
+    }
+
+    .listing-card:hover .listing-cover {
+      transform: scale(1.06);
+      filter: brightness(0.65) saturate(1);
+    }
+
+    /* Gradient overlay */
+    .listing-cover-wrap::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(8,8,8,0.88) 0%,
+        rgba(8,8,8,0.3) 40%,
+        transparent 65%
+      );
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Photo count badge */
+    .listing-badge {
+      position: absolute;
+      top: 1.25rem;
+      right: 1.25rem;
+      z-index: 3;
+      background: rgba(8,8,8,0.55);
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      padding: 0.3rem 0.8rem;
+      border-radius: 100px;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      color: rgba(232,226,217,0.7);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .listing-badge::before {
+      content: '';
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: 0.8;
+      flex-shrink: 0;
+    }
+
+    /* Card text */
+    .listing-info {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      z-index: 2;
+      padding: 1.8rem 2rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .listing-supertitle {
+      font-size: 0.65rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-variant: small-caps;
+      font-weight: 500;
+    }
+
+    .listing-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: var(--white);
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+    }
+
+    /* CTA button — appears on hover */
+    .listing-cta {
+      position: absolute;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 3;
+      background: rgba(200,169,110,0.15);
+      border: 1px solid rgba(200,169,110,0.45);
+      color: var(--accent);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      padding: 0.55rem 1.2rem;
+      border-radius: 100px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.35s var(--ease-out), transform 0.35s var(--ease-out), background 0.25s;
+      pointer-events: none;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      white-space: nowrap;
+    }
+
+    .listing-card:hover .listing-cta {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .listing-cta:hover {
+      background: rgba(200,169,110,0.28) !important;
+    }
+
+    .listing-cta .arrow {
+      font-size: 0.9rem;
+      transition: transform 0.3s var(--ease-out);
+    }
+
+    .listing-card:hover .listing-cta .arrow {
+      transform: translateX(3px);
+    }
+
+    /* ── Lightbox ── */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(4,4,4,0.97);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s var(--ease-out);
+    }
+
+    .lightbox.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Click-outside zone */
+    .lightbox-backdrop {
+      position: absolute;
+      inset: 0;
+      cursor: zoom-out;
+    }
+
+    /* Top bar */
+    .lightbox-bar {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      z-index: 4;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.4rem 2rem;
+      background: linear-gradient(to bottom, rgba(4,4,4,0.8) 0%, transparent 100%);
+    }
+
+    .lightbox-counter {
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      color: rgba(232,226,217,0.55);
+    }
+
+    .lightbox-counter strong {
+      color: var(--white);
+      font-weight: 500;
+    }
+
+    .lightbox-close {
+      width: 2.4rem;
+      height: 2.4rem;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.25s, border-color 0.25s, transform 0.25s;
+      flex-shrink: 0;
+    }
+
+    .lightbox-close:hover {
+      background: rgba(255,255,255,0.12);
+      border-color: rgba(255,255,255,0.25);
+      transform: scale(1.08);
+    }
+
+    /* Image stage */
+    .lightbox-stage {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      padding: 5rem 5.5rem;
+    }
+
+    .lightbox-img-wrap {
+      position: relative;
+      max-width: 100%;
+      max-height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .lightbox-img {
+      max-width: 100%;
+      max-height: calc(100dvh - 10rem);
+      object-fit: contain;
+      display: block;
+      border-radius: 0.5rem;
+      opacity: 0;
+      transition: opacity 0.28s var(--ease-out);
+      pointer-events: none;
+      user-select: none;
+      box-shadow: 0 40px 120px rgba(0,0,0,0.8);
+    }
+
+    .lightbox-img.loaded {
+      opacity: 1;
+    }
+
+    /* Nav arrows */
+    .lightbox-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 4;
+      width: 3rem;
+      height: 3rem;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(8,8,8,0.6);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      color: var(--white);
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.25s, border-color 0.25s, transform 0.25s var(--ease-out);
+      flex-shrink: 0;
+    }
+
+    .lightbox-arrow:hover {
+      background: rgba(200,169,110,0.18);
+      border-color: rgba(200,169,110,0.4);
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .lightbox-arrow--prev { left: 1.5rem; }
+    .lightbox-arrow--next { right: 1.5rem; }
+
+    .lightbox-arrow:disabled {
+      opacity: 0.25;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    /* Thumbnail strip */
+    .lightbox-thumbs {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      z-index: 4;
+      padding: 1rem 2rem 1.5rem;
+      background: linear-gradient(to top, rgba(4,4,4,0.85) 0%, transparent 100%);
+      display: flex;
+      gap: 0.4rem;
+      justify-content: center;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .lightbox-thumbs::-webkit-scrollbar { display: none; }
+
+    .lightbox-thumb {
+      width: 3.2rem;
+      height: 2.4rem;
+      border-radius: 0.3rem;
+      overflow: hidden;
+      flex-shrink: 0;
+      border: 1.5px solid transparent;
+      cursor: pointer;
+      transition: border-color 0.2s, opacity 0.2s, transform 0.2s;
+      opacity: 0.4;
+    }
+
+    .lightbox-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      pointer-events: none;
+    }
+
+    .lightbox-thumb.active {
+      border-color: var(--accent);
+      opacity: 1;
+      transform: scale(1.08);
+    }
+
+    .lightbox-thumb:hover {
+      opacity: 0.75;
+    }
+
+    .lightbox-thumb.active:hover {
+      opacity: 1;
+    }
+
+    /* ── Reveal animations ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+    .reveal-delay-5 { transition-delay: 0.5s; }
+
+    /* ── Footer ── */
+    footer {
+      padding: 3rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-copy {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .footer-links a {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      transition: color 0.3s;
+    }
+
+    .footer-links a:hover { color: var(--accent); }
+
+    /* ── 3D Hero ── */
+    .hero3d {
+      position: relative;
+      width: 100%;
+      height: 70vh;
+      min-height: 480px;
+      background: #080808;
+      overflow: hidden;
+    }
+    .hero3d-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+    }
+    .hero3d-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 4rem 5rem;
+      background: linear-gradient(to top, rgba(8,8,8,0.85) 0%, transparent 55%);
+      pointer-events: none;
+    }
+    .hero3d-tag {
+      font-size: 0.68rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: #c8a96e;
+      margin-bottom: 1rem;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .hero3d-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.8rem, 5vw, 5rem);
+      font-weight: 400;
+      line-height: 1.0;
+      letter-spacing: -0.02em;
+      color: #f5f0e8;
+      margin: 0 0 1.2rem;
+    }
+    .hero3d-title em { font-style: italic; color: #c8a96e; }
+    .hero3d-meta {
+      font-size: 0.78rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(232,226,217,0.4);
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .listings-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .listings-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+
+      .hero {
+        padding: 8rem 1.5rem 4rem;
+      }
+
+      .listings-section {
+        padding: 4rem 1.5rem 6rem;
+      }
+
+      .lightbox-stage {
+        padding: 4.5rem 3.5rem;
+      }
+
+      .lightbox-arrow--prev { left: 0.5rem; }
+      .lightbox-arrow--next { right: 0.5rem; }
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 1.2rem 1.5rem; }
+      .nav-links { display: none; }
+      footer { flex-direction: column; gap: 1.5rem; text-align: center; }
+
+      .listing-name { font-size: 1.4rem; }
+
+      .hero-title { font-size: clamp(2.8rem, 12vw, 5rem); }
+
+      .lightbox-thumbs { display: none; }
+      .lightbox-stage { padding: 4rem 3rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav id="nav">
+    <a href="index.html" class="nav-logo serif">Q. Allard</a>
+    <ul class="nav-links">
+      <li><a href="index.html#services">Work</a></li>
+      <li><a href="realestate.html" class="active">Real Estate</a></li>
+      <li><a href="travel.html">Travel</a></li>
+      <li><a href="index.html#contact" class="nav-cta">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- 3D Hero -->
+  <section class="hero3d" id="hero3d">
+    <img class="hero3d-img" src="ChatGPT Image Apr 24, 2026, 10_55_31 AM.png" alt="Luxury coastal real estate at dusk" />
+    <div class="hero3d-overlay">
+      <div class="hero3d-tag">Quinn Allard · Photography</div>
+      <h1 class="hero3d-title">Real Estate<br><em>Photography.</em></h1>
+      <div class="hero3d-meta">5 Listings &nbsp;·&nbsp; Santa Cruz County, CA &nbsp;·&nbsp; 2026</div>
+    </div>
+  </section>
+
+  <!-- Listings -->
+  <section class="listings-section">
+    <div class="listings-header">
+      <div>
+        <div class="section-tag reveal">Portfolio</div>
+        <h2 class="section-title reveal reveal-delay-1">All Listings</h2>
+      </div>
+      <span class="listings-count reveal reveal-delay-2">Seascape Resort · Santa Cruz County, CA</span>
+    </div>
+
+    <div class="listings-grid" id="listingsGrid">
+      <!-- Cards injected by JS -->
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <span class="footer-copy">&#169; 2026 Quinn Allard. All rights reserved.</span>
+    <ul class="footer-links">
+      <li><a href="#">Instagram</a></li>
+      <li><a href="#">LinkedIn</a></li>
+      <li><a href="#">Privacy</a></li>
+    </ul>
+  </footer>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo gallery">
+    <div class="lightbox-backdrop" id="lightboxBackdrop"></div>
+
+    <!-- Top bar -->
+    <div class="lightbox-bar">
+      <div class="lightbox-counter" id="lightboxCounter">
+        <strong id="lbListingName">Unit 7</strong>
+        &nbsp;·&nbsp;
+        <span id="lbIndex">1</span> / <span id="lbTotal">29</span>
+      </div>
+      <button class="lightbox-close" id="lightboxClose" aria-label="Close">&#10005;</button>
+    </div>
+
+    <!-- Stage -->
+    <div class="lightbox-stage" id="lightboxStage">
+      <div class="lightbox-img-wrap">
+        <img class="lightbox-img" id="lightboxImg" src="" alt="Property photo" />
+      </div>
+    </div>
+
+    <!-- Arrows -->
+    <button class="lightbox-arrow lightbox-arrow--prev" id="lbPrev" aria-label="Previous photo">&#8592;</button>
+    <button class="lightbox-arrow lightbox-arrow--next" id="lbNext" aria-label="Next photo">&#8594;</button>
+
+    <!-- Thumbnails -->
+    <div class="lightbox-thumbs" id="lightboxThumbs"></div>
+  </div>
+
+  <script>
+    // ─────────────────────────────────────────────
+    // Data
+    // ─────────────────────────────────────────────
+    const LISTINGS = [
+      {
+        name: 'Unit 7',
+        subtitle: 'Seascape Resort',
+        cover: 'listings/Seascape Resort Unit 7/07 002.jpg',
+        photos: [
+          'listings/Seascape Resort Unit 7/07 002.jpg',
+          'listings/Seascape Resort Unit 7/07 004.jpg',
+          'listings/Seascape Resort Unit 7/07 006.jpg',
+          'listings/Seascape Resort Unit 7/07 008.jpg',
+          'listings/Seascape Resort Unit 7/07 012.jpg',
+          'listings/Seascape Resort Unit 7/07 018.jpg',
+          'listings/Seascape Resort Unit 7/07 019.jpg',
+          'listings/Seascape Resort Unit 7/07 020.jpg',
+          'listings/Seascape Resort Unit 7/07 022.jpg',
+          'listings/Seascape Resort Unit 7/07 024.jpg',
+          'listings/Seascape Resort Unit 7/07 026.jpg',
+          'listings/Seascape Resort Unit 7/07 028.jpg',
+          'listings/Seascape Resort Unit 7/07 030.jpg',
+          'listings/Seascape Resort Unit 7/07 032.jpg',
+          'listings/Seascape Resort Unit 7/07 034.jpg',
+          'listings/Seascape Resort Unit 7/07 036.jpg',
+          'listings/Seascape Resort Unit 7/07 038.jpg',
+          'listings/Seascape Resort Unit 7/07 040.jpg',
+          'listings/Seascape Resort Unit 7/07 042.jpg',
+          'listings/Seascape Resort Unit 7/07 044.jpg',
+          'listings/Seascape Resort Unit 7/07 046.jpg',
+          'listings/Seascape Resort Unit 7/07 048.jpg',
+          'listings/Seascape Resort Unit 7/07 050.jpg',
+          'listings/Seascape Resort Unit 7/07 052.jpg',
+          'listings/Seascape Resort Unit 7/07 054.jpg',
+          'listings/Seascape Resort Unit 7/07 056.jpg',
+          'listings/Seascape Resort Unit 7/07 058.jpg',
+          'listings/Seascape Resort Unit 7/07 060.jpg',
+          'listings/Seascape Resort Unit 7/07-02629.jpg'
+        ]
+      },
+      {
+        name: 'Unit 60',
+        subtitle: 'Seascape Resort',
+        cover: 'listings/Seascape Resort Unit 60/211-00.jpg',
+        photos: [
+          'listings/Seascape Resort Unit 60/211-00.jpg',
+          'listings/Seascape Resort Unit 60/211-001.jpg',
+          'listings/Seascape Resort Unit 60/211-004.jpg',
+          'listings/Seascape Resort Unit 60/211-005.jpg',
+          'listings/Seascape Resort Unit 60/211-006.jpg',
+          'listings/Seascape Resort Unit 60/211-007.jpg',
+          'listings/Seascape Resort Unit 60/211-008.jpg',
+          'listings/Seascape Resort Unit 60/211-009.jpg',
+          'listings/Seascape Resort Unit 60/211-010.jpg',
+          'listings/Seascape Resort Unit 60/211-011.jpg',
+          'listings/Seascape Resort Unit 60/211-012.jpg',
+          'listings/Seascape Resort Unit 60/211-013.jpg',
+          'listings/Seascape Resort Unit 60/211-014.jpg',
+          'listings/Seascape Resort Unit 60/211-015.jpg',
+          'listings/Seascape Resort Unit 60/211-016.jpg',
+          'listings/Seascape Resort Unit 60/211-017.jpg',
+          'listings/Seascape Resort Unit 60/211-018.jpg',
+          'listings/Seascape Resort Unit 60/211-019.jpg',
+          'listings/Seascape Resort Unit 60/211-020.jpg',
+          'listings/Seascape Resort Unit 60/211-021.jpg',
+          'listings/Seascape Resort Unit 60/211-022.jpg',
+          'listings/Seascape Resort Unit 60/211-023.jpg'
+        ]
+      },
+      {
+        name: 'Unit 211',
+        subtitle: 'Seascape Resort',
+        cover: 'listings/Seascape Resort Unit 211/211.3 014.jpg',
+        photos: [
+          'listings/Seascape Resort Unit 211/211.3 (16 of 23).jpg',
+          'listings/Seascape Resort Unit 211/211.3 (18 of 23).jpg',
+          'listings/Seascape Resort Unit 211/211.3 (20 of 23).jpg',
+          'listings/Seascape Resort Unit 211/211.3 (21 of 23).jpg',
+          'listings/Seascape Resort Unit 211/211.3 (22 of 23).jpg',
+          'listings/Seascape Resort Unit 211/211.3 (23 of 23).jpg',
+          'listings/Seascape Resort Unit 211/211.3 (9 of 23).jpg',
+          'listings/Seascape Resort Unit 211/211.3 014.jpg',
+          'listings/Seascape Resort Unit 211/211.3 018(1).jpg',
+          'listings/Seascape Resort Unit 211/211.3 018.jpg',
+          'listings/Seascape Resort Unit 211/211.3 023.jpg'
+        ]
+      },
+      {
+        name: 'Unit 221',
+        subtitle: 'Seascape Resort',
+        cover: 'listings/Seascape Resort Unit 221/221 002.jpg',
+        photos: [
+          'listings/Seascape Resort Unit 221/221 002.jpg',
+          'listings/Seascape Resort Unit 221/221 004.jpg',
+          'listings/Seascape Resort Unit 221/221 006.jpg',
+          'listings/Seascape Resort Unit 221/221 010.jpg',
+          'listings/Seascape Resort Unit 221/221 012.jpg',
+          'listings/Seascape Resort Unit 221/221 014.jpg',
+          'listings/Seascape Resort Unit 221/221 016.jpg',
+          'listings/Seascape Resort Unit 221/221 018.jpg',
+          'listings/Seascape Resort Unit 221/221 020.jpg',
+          'listings/Seascape Resort Unit 221/221 022.jpg'
+        ]
+      },
+      {
+        name: 'Unit 302',
+        subtitle: 'Seascape Resort',
+        cover: 'listings/Seascape Resort Unit 302/302 002.jpg',
+        photos: [
+          'listings/Seascape Resort Unit 302/302 002.jpg',
+          'listings/Seascape Resort Unit 302/302 004.jpg',
+          'listings/Seascape Resort Unit 302/302 006.jpg',
+          'listings/Seascape Resort Unit 302/302 008.jpg',
+          'listings/Seascape Resort Unit 302/302 010.jpg',
+          'listings/Seascape Resort Unit 302/302 012.jpg',
+          'listings/Seascape Resort Unit 302/302 014.jpg',
+          'listings/Seascape Resort Unit 302/302 020.jpg',
+          'listings/Seascape Resort Unit 302/302 022.jpg',
+          'listings/Seascape Resort Unit 302/302 032.jpg',
+          'listings/Seascape Resort Unit 302/302 034.jpg',
+          'listings/Seascape Resort Unit 302/302 036.jpg',
+          'listings/Seascape Resort Unit 302/302 038.jpg',
+          'listings/Seascape Resort Unit 302/302 039.jpg',
+          'listings/Seascape Resort Unit 302/302 040.jpg',
+          'listings/Seascape Resort Unit 302/302 041.jpg',
+          'listings/Seascape Resort Unit 302/302 042.jpg',
+          'listings/Seascape Resort Unit 302/302 043.jpg',
+          'listings/Seascape Resort Unit 302/302 044.jpg',
+          'listings/Seascape Resort Unit 302/302 046.jpg',
+          'listings/Seascape Resort Unit 302/302 048.jpg'
+        ]
+      }
+    ];
+
+    // ─────────────────────────────────────────────
+    // Build listing cards
+    // ─────────────────────────────────────────────
+    const grid = document.getElementById('listingsGrid');
+
+    LISTINGS.forEach((listing, listingIdx) => {
+      const card = document.createElement('article');
+      card.className = 'listing-card reveal' + (listingIdx % 2 === 1 ? ' reveal-delay-1' : '');
+      card.setAttribute('role', 'button');
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('aria-label', `Open gallery for ${listing.subtitle} ${listing.name}`);
+
+      card.innerHTML = `
+        <div class="listing-cover-wrap">
+          <img
+            class="listing-cover"
+            src="${encodeURI(listing.cover)}"
+            alt="${listing.subtitle} ${listing.name} — cover photo"
+            loading="lazy"
+          />
+          <div class="listing-badge">${listing.photos.length} photos</div>
+        </div>
+        <div class="listing-info">
+          <span class="listing-supertitle">${listing.subtitle}</span>
+          <h2 class="listing-name">${listing.name}</h2>
+        </div>
+        <div class="listing-cta">View Gallery <span class="arrow">&#8594;</span></div>
+      `;
+
+      card.addEventListener('click', () => openLightbox(listingIdx, 0));
+      card.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openLightbox(listingIdx, 0);
+        }
+      });
+
+      grid.appendChild(card);
+    });
+
+    // ─────────────────────────────────────────────
+    // Lightbox state
+    // ─────────────────────────────────────────────
+    const lightbox      = document.getElementById('lightbox');
+    const lbImg         = document.getElementById('lightboxImg');
+    const lbCounter     = document.getElementById('lightboxCounter');
+    const lbListingName = document.getElementById('lbListingName');
+    const lbIndex       = document.getElementById('lbIndex');
+    const lbTotal       = document.getElementById('lbTotal');
+    const lbPrev        = document.getElementById('lbPrev');
+    const lbNext        = document.getElementById('lbNext');
+    const lbClose       = document.getElementById('lightboxClose');
+    const lbBackdrop    = document.getElementById('lightboxBackdrop');
+    const lbThumbs      = document.getElementById('lightboxThumbs');
+
+    let currentListing = 0;
+    let currentPhoto   = 0;
+    let isOpen         = false;
+    let preloadCache   = {};
+
+    function openLightbox(listingIdx, photoIdx) {
+      currentListing = listingIdx;
+      currentPhoto   = photoIdx;
+      isOpen = true;
+
+      buildThumbs();
+      showPhoto(photoIdx, false);
+
+      lightbox.classList.add('open');
+      document.body.style.overflow = 'hidden';
+
+      // Preload all images for this listing in background
+      preloadAll(listingIdx);
+    }
+
+    function closeLightbox() {
+      isOpen = false;
+      lightbox.classList.remove('open');
+      document.body.style.overflow = '';
+      lbImg.classList.remove('loaded');
+    }
+
+    function showPhoto(idx, animate = true) {
+      const listing = LISTINGS[currentListing];
+      const total   = listing.photos.length;
+
+      // Clamp
+      if (idx < 0) idx = 0;
+      if (idx >= total) idx = total - 1;
+      currentPhoto = idx;
+
+      // Update counter
+      lbListingName.textContent = `${listing.subtitle} · ${listing.name}`;
+      lbIndex.textContent       = idx + 1;
+      lbTotal.textContent       = total;
+
+      // Arrow states
+      lbPrev.disabled = (idx === 0);
+      lbNext.disabled = (idx === total - 1);
+
+      // Update thumbnail highlight
+      const thumbEls = lbThumbs.querySelectorAll('.lightbox-thumb');
+      thumbEls.forEach((t, i) => {
+        t.classList.toggle('active', i === idx);
+      });
+      // Scroll active thumb into view
+      if (thumbEls[idx]) {
+        thumbEls[idx].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+
+      // Fade out current image
+      if (animate) {
+        lbImg.classList.remove('loaded');
+      }
+
+      // Load new image
+      const path = listing.photos[idx];
+      const src  = encodeURI(path);
+
+      const preloaded = preloadCache[path];
+      if (preloaded && preloaded.complete && preloaded.naturalWidth > 0) {
+        lbImg.src = src;
+        // Small delay to allow CSS transition to play even when cached
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => lbImg.classList.add('loaded'));
+        });
+      } else {
+        const img = new Image();
+        img.onload = () => {
+          lbImg.src = src;
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => lbImg.classList.add('loaded'));
+          });
+        };
+        img.onerror = () => {
+          lbImg.src = src; // show broken image rather than nothing
+          lbImg.classList.add('loaded');
+        };
+        img.src = src;
+        preloadCache[path] = img;
+      }
+    }
+
+    function buildThumbs() {
+      const listing = LISTINGS[currentListing];
+      lbThumbs.innerHTML = '';
+      listing.photos.forEach((path, i) => {
+        const thumb = document.createElement('div');
+        thumb.className = 'lightbox-thumb' + (i === currentPhoto ? ' active' : '');
+        const img = document.createElement('img');
+        img.src = encodeURI(path);
+        img.alt = `Photo ${i + 1}`;
+        img.loading = 'lazy';
+        thumb.appendChild(img);
+        thumb.addEventListener('click', e => {
+          e.stopPropagation();
+          showPhoto(i);
+        });
+        lbThumbs.appendChild(thumb);
+      });
+    }
+
+    function preloadAll(listingIdx) {
+      const listing = LISTINGS[listingIdx];
+      listing.photos.forEach(path => {
+        if (!preloadCache[path]) {
+          const img = new Image();
+          img.src = encodeURI(path);
+          preloadCache[path] = img;
+        }
+      });
+    }
+
+    function navigate(delta) {
+      const listing = LISTINGS[currentListing];
+      const next    = currentPhoto + delta;
+      if (next >= 0 && next < listing.photos.length) {
+        showPhoto(next);
+      }
+    }
+
+    // ── Lightbox event listeners ──
+    lbClose.addEventListener('click', closeLightbox);
+    lbBackdrop.addEventListener('click', closeLightbox);
+    lbPrev.addEventListener('click', e => { e.stopPropagation(); navigate(-1); });
+    lbNext.addEventListener('click', e => { e.stopPropagation(); navigate(+1); });
+
+    // Prevent stage clicks from closing (clicks on the image area)
+    document.getElementById('lightboxStage').addEventListener('click', e => {
+      e.stopPropagation();
+    });
+
+    // Keyboard navigation
+    document.addEventListener('keydown', e => {
+      if (!isOpen) return;
+      switch (e.key) {
+        case 'Escape':
+        case 'Esc':
+          closeLightbox();
+          break;
+        case 'ArrowLeft':
+          navigate(-1);
+          break;
+        case 'ArrowRight':
+          navigate(+1);
+          break;
+      }
+    });
+
+    // Touch/swipe support
+    let touchStartX = 0;
+    lightbox.addEventListener('touchstart', e => {
+      touchStartX = e.changedTouches[0].clientX;
+    }, { passive: true });
+
+    lightbox.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(dx) > 50) {
+        navigate(dx < 0 ? +1 : -1);
+      }
+    }, { passive: true });
+
+    // ─────────────────────────────────────────────
+    // Reveal on scroll
+    // ─────────────────────────────────────────────
+    const reveals  = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.08 });
+
+    reveals.forEach(el => observer.observe(el));
+
+    // Immediately reveal hero elements
+    document.querySelectorAll('.hero .reveal').forEach((el, i) => {
+      setTimeout(() => el.classList.add('visible'), 200 + i * 120);
+    });
+
+    // ─────────────────────────────────────────────
+    // Nav blur on scroll
+    // ─────────────────────────────────────────────
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.style.backdropFilter = window.scrollY > 60 ? 'blur(20px)' : 'blur(0px)';
+    }, { passive: true });
+  </script>
+
+  <script>
+    // ── 3D Architectural wireframe hero ──
+    (function () {
+      const canvas = document.getElementById('reCanvas');
+      if (!canvas || typeof THREE === 'undefined') return;
+
+      const W = canvas.clientWidth, H = canvas.clientHeight;
+      const scene    = new THREE.Scene();
+      const cam      = new THREE.PerspectiveCamera(40, W / H, 0.1, 100);
+      cam.position.set(0, 1.2, 7);
+      cam.lookAt(0, 0.5, 0);
+
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+      renderer.setSize(W, H);
+      renderer.setClearColor(0x000000, 0);
+
+      const gold     = 0xc8a96e;
+      const goldDim  = 0x8a6f3e;
+      const lineMat  = new THREE.LineBasicMaterial({ color: gold,    transparent: true, opacity: 0.75 });
+      const lineDim  = new THREE.LineBasicMaterial({ color: goldDim, transparent: true, opacity: 0.35 });
+
+      function wireBox(w, h, d, mat) {
+        const geo  = new THREE.BoxGeometry(w, h, d);
+        const edge = new THREE.EdgesGeometry(geo);
+        return new THREE.LineSegments(edge, mat);
+      }
+
+      const group = new THREE.Group();
+
+      // Foundation slab
+      const slab = wireBox(3.2, 0.08, 2.2, lineDim);
+      slab.position.y = -0.94;
+      group.add(slab);
+
+      // Main walls
+      const walls = wireBox(3, 2, 2, lineMat);
+      group.add(walls);
+
+      // Roof peak — custom pyramid shape
+      const roofPts = [
+        new THREE.Vector3(-1.6, 0, -1.1),
+        new THREE.Vector3( 1.6, 0, -1.1),
+        new THREE.Vector3( 1.6, 0,  1.1),
+        new THREE.Vector3(-1.6, 0,  1.1),
+        new THREE.Vector3( 0,   1,  0  ),
+      ];
+      const roofEdges = [[0,1],[1,2],[2,3],[3,0],[0,4],[1,4],[2,4],[3,4]];
+      const roofPositions = [];
+      roofEdges.forEach(([a, b]) => {
+        roofPositions.push(roofPts[a].x, roofPts[a].y, roofPts[a].z);
+        roofPositions.push(roofPts[b].x, roofPts[b].y, roofPts[b].z);
+      });
+      const roofGeo = new THREE.BufferGeometry();
+      roofGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(roofPositions), 3));
+      const roof = new THREE.LineSegments(roofGeo, lineMat);
+      roof.position.y = 1;
+      group.add(roof);
+
+      // Windows (front face z = 1)
+      const winPositions = [];
+      [[-0.8, 0.2], [0.8, 0.2]].forEach(([x, y]) => {
+        const ww = 0.5, wh = 0.55;
+        const pts = [
+          [x-ww/2, y-wh/2, 1.01], [x+ww/2, y-wh/2, 1.01],
+          [x+ww/2, y+wh/2, 1.01], [x-ww/2, y+wh/2, 1.01],
+        ];
+        [[0,1],[1,2],[2,3],[3,0]].forEach(([a,b]) => {
+          winPositions.push(...pts[a], ...pts[b]);
+        });
+        // cross divider
+        winPositions.push(x, y-wh/2, 1.01, x, y+wh/2, 1.01);
+        winPositions.push(x-ww/2, y, 1.01, x+ww/2, y, 1.01);
+      });
+      const winGeo = new THREE.BufferGeometry();
+      winGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(winPositions), 3));
+      group.add(new THREE.LineSegments(winGeo, lineMat));
+
+      // Door
+      const doorPts = [[-0.22,-1,1.01],[0.22,-1,1.01],[0.22,-0.1,1.01],[-0.22,-0.1,1.01]];
+      const doorPos = [];
+      [[0,1],[1,2],[2,3],[3,0]].forEach(([a,b]) => doorPos.push(...doorPts[a], ...doorPts[b]));
+      const doorGeo = new THREE.BufferGeometry();
+      doorGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(doorPos), 3));
+      group.add(new THREE.LineSegments(doorGeo, lineMat));
+
+      // Chimney
+      const chimney = wireBox(0.3, 0.6, 0.3, lineDim);
+      chimney.position.set(0.7, 1.6, 0);
+      group.add(chimney);
+
+      // Garage/extension on left side
+      const garage = wireBox(1.2, 1.2, 2, lineDim);
+      garage.position.set(-2.1, -0.4, 0);
+      group.add(garage);
+
+      // Ground grid
+      const gridHelper = new THREE.GridHelper(12, 12, 0x1a1408, 0x111008);
+      gridHelper.position.y = -1;
+      scene.add(gridHelper);
+
+      // Particle field
+      const pCount = 280;
+      const pPos   = new Float32Array(pCount * 3);
+      for (let i = 0; i < pCount; i++) {
+        pPos[i*3]   = (Math.random() - 0.5) * 14;
+        pPos[i*3+1] = (Math.random() - 0.5) * 10;
+        pPos[i*3+2] = (Math.random() - 0.5) * 14;
+      }
+      const pGeo = new THREE.BufferGeometry();
+      pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+      const pMat = new THREE.PointsMaterial({ color: gold, size: 0.025, transparent: true, opacity: 0.35, depthWrite: false });
+      scene.add(new THREE.Points(pGeo, pMat));
+
+      group.position.set(0.8, 0, 0); // offset slightly left of center
+      scene.add(group);
+
+      // Mouse
+      let mx = 0, my = 0;
+      document.addEventListener('mousemove', e => {
+        mx = (e.clientX / window.innerWidth  - 0.5) * 2;
+        my = (e.clientY / window.innerHeight - 0.5) * 2;
+      });
+
+      window.addEventListener('resize', () => {
+        const w = canvas.clientWidth, h = canvas.clientHeight;
+        renderer.setSize(w, h);
+        cam.aspect = w / h;
+        cam.updateProjectionMatrix();
+      });
+
+      let t = 0;
+      function animate() {
+        requestAnimationFrame(animate);
+        t += 0.006;
+        group.rotation.y += (Math.sin(t * 0.18) * 0.4 - group.rotation.y) * 0.008;
+        group.rotation.x += (my * 0.06 - group.rotation.x) * 0.04;
+        group.rotation.y += mx * 0.0008;
+        renderer.render(scene, cam);
+      }
+      animate();
+    })();
+  </script>
+</body>
+</html>
