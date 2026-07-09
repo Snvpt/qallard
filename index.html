@@ -3,7 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quinn Allard — Visual Portfolio</title>
+  <title>Quinn Allard — Santa Cruz Real Estate &amp; Drone Photography</title>
+  <meta name="description" content="Real estate, aerial, and FPV drone photography in Santa Cruz County, CA. Interiors, exteriors, and cinematic aerials — helping properties be seen the way they deserve. FAA Part 107 certified." />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Quinn Allard — Santa Cruz Real Estate &amp; Drone Photography" />
+  <meta property="og:description" content="Real estate, aerial, and FPV drone photography in Santa Cruz County, CA. FAA Part 107 certified." />
+  <meta property="og:image" content="https://snvpt.github.io/qallard/Hero%20Header/hero-aerial.jpg" />
+  <meta property="og:url" content="https://snvpt.github.io/qallard/" />
+  <meta name="twitter:card" content="summary_large_image" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -1377,7 +1385,7 @@
     <!-- 01 — Real Estate -->
     <div class="disc-panel reveal">
       <div class="disc-photo">
-        <img src="Listings/Seascape Resort Unit 60/211-00.jpg" alt="Seascape Resort Unit 60 ocean view" />
+        <img src="Listings/Seascape Resort Unit 60/web/211-00.jpg" alt="Seascape Resort Unit 60 ocean view" />
       </div>
       <div class="disc-text">
         <span class="disc-num">01</span>
@@ -1526,7 +1534,7 @@
     </div>
     <div class="gallery-grid reveal">
       <div class="g-item g1">
-        <img src="Listings/Seascape Resort Unit 302/302 002.jpg" alt="Seascape Resort Unit 302 bedroom" />
+        <img src="Listings/Seascape Resort Unit 302/web/302 002.jpg" alt="Seascape Resort Unit 302 bedroom" />
       </div>
       <div class="g-item g2">
         <img src="travel/NYC : DC/web/DSC03064.jpg" alt="New York building facades with a bird in flight" />
@@ -1535,13 +1543,13 @@
         <img src="travel/NYC : DC/web/DSC03268.jpg" alt="Aerial view of the Manhattan skyline" />
       </div>
       <div class="g-item g4">
-        <img src="Listings/Seascape Resort Unit 60/211-001.jpg" alt="Seascape Resort Unit 60 interior" />
+        <img src="Listings/Seascape Resort Unit 60/web/211-001.jpg" alt="Seascape Resort Unit 60 interior" />
       </div>
       <div class="g-item g5">
         <img src="travel/NYC : DC/web/DSC03092.jpg" alt="Times Square traffic at night" />
       </div>
       <div class="g-item g6">
-        <img src="Listings/Seascape Resort Unit 211/211.3 014.jpg" alt="Seascape Resort Unit 211" />
+        <img src="Listings/Seascape Resort Unit 211/web/211.3 014.jpg" alt="Seascape Resort Unit 211" />
       </div>
     </div>
   </section>
@@ -1566,7 +1574,7 @@
       <div class="section-tag reveal">Get in Touch</div>
       <h2 class="section-title reveal reveal-delay-1">Let's make<br><em>something great.</em></h2>
       <p style="color: var(--muted); font-size: 0.9rem; line-height: 1.8; margin-top: 1.5rem; max-width: 36ch;" class="reveal reveal-delay-2">
-        Available for real estate shoots, FPV cinematic projects, commercial photography, and editorial work. Response within 24 hours.
+        Available for real estate shoots, FPV cinematic projects, and aerial photography across Santa Cruz County and beyond. Response within 24 hours.
       </p>
       <div class="contact-info reveal reveal-delay-3">
         <div class="contact-item">
@@ -1591,35 +1599,35 @@
     </div>
     <div class="contact-right reveal">
       <form class="form" onsubmit="handleSubmit(event)">
+        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">First Name</label>
-            <input type="text" class="form-input" placeholder="Alex" />
+            <input type="text" name="first_name" class="form-input" placeholder="Alex" required />
           </div>
           <div class="form-group">
             <label class="form-label">Last Name</label>
-            <input type="text" class="form-input" placeholder="Morgan" />
+            <input type="text" name="last_name" class="form-input" placeholder="Morgan" />
           </div>
         </div>
         <div class="form-group">
           <label class="form-label">Email</label>
-          <input type="email" class="form-input" placeholder="alex@agency.com" />
+          <input type="email" name="email" class="form-input" placeholder="alex@agency.com" required />
         </div>
         <div class="form-group">
           <label class="form-label">Project Type</label>
-          <select class="form-select">
+          <select class="form-select" name="project_type">
             <option value="" disabled selected>Select a service</option>
             <option>Real Estate Photography</option>
             <option>FPV Cinematic</option>
             <option>Standard Aerial / Drone</option>
-            <option>Portrait / Commercial</option>
             <option>Full Property Package</option>
             <option>Other</option>
           </select>
         </div>
         <div class="form-group">
           <label class="form-label">Message</label>
-          <textarea class="form-textarea" placeholder="Tell me about the shoot — property type, timeline, deliverables needed..."></textarea>
+          <textarea class="form-textarea" name="message" placeholder="Tell me about the shoot — property type, timeline, deliverables needed..." required></textarea>
         </div>
         <button type="submit" class="btn-submit">Send Inquiry</button>
       </form>
@@ -1648,16 +1656,38 @@
     reveals.forEach(el => observer.observe(el));
 
 
-    // ── Form submit ──
-    function handleSubmit(e) {
+    // ── Form submit — delivers to email via FormSubmit ──
+    async function handleSubmit(e) {
       e.preventDefault();
-      const btn = e.target.querySelector('.btn-submit');
-      btn.textContent = 'Sent!';
-      btn.style.background = '#5a9e6f';
+      const form = e.target;
+      const btn = form.querySelector('.btn-submit');
+      const data = new FormData(form);
+      data.append('_subject', 'New inquiry — qallard portfolio');
+      data.append('_template', 'table');
+
+      btn.textContent = 'Sending…';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('https://formsubmit.co/ajax/quinnallard98@gmail.com', {
+          method: 'POST',
+          body: data,
+          headers: { 'Accept': 'application/json' }
+        });
+        if (!res.ok) throw new Error('send failed');
+        btn.textContent = 'Sent!';
+        btn.style.background = '#5a9e6f';
+        form.reset();
+      } catch (err) {
+        btn.textContent = 'Something went wrong — email me directly';
+        btn.style.background = '#9e5a5a';
+      }
+
       setTimeout(() => {
         btn.textContent = 'Send Inquiry';
         btn.style.background = '';
-      }, 3000);
+        btn.disabled = false;
+      }, 4000);
     }
 
     // ── Nav blur on scroll ──
