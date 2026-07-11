@@ -75,16 +75,15 @@
     background: linear-gradient(to bottom, rgba(15,13,11,0.9), rgba(15,13,11,0));
   }
   .nav .mark {
-    display: flex; align-items: center; gap: 10px;
+    display: flex; align-items: center;
     color: var(--ink);
   }
-  .nav .mark .sigil {
-    width: 18px; height: 18px; border: 1px solid var(--amber);
-    border-radius: 50%; position: relative;
-  }
-  .nav .mark .sigil::after {
-    content: ''; position: absolute; inset: 4px; border-radius: 50%;
-    background: var(--amber); box-shadow: 0 0 10px var(--amber);
+  .nav .mark .nav-logo {
+    font-family: 'EB Garamond', serif;
+    font-size: 1.25rem;
+    letter-spacing: 0.06em;
+    color: var(--ink);
+    text-decoration: none;
   }
   .nav ul { list-style: none; display: flex; gap: 28px; padding: 0; margin: 0; }
   .nav a { color: var(--ink-dim); text-decoration: none; transition: color .2s; }
@@ -578,15 +577,13 @@
 
 <nav class="nav">
   <div class="mark">
-    <div class="sigil"></div>
-    <a href="index.html" style="color:inherit;text-decoration:none;">Q. Allard</a>
+    <a href="index.html" class="nav-logo">Q. Allard</a>
   </div>
   <ul>
     <li><a href="index.html#services">Work</a></li>
     <li><a href="index.html#realestate">Real Estate</a></li>
-    <li><a href="index.html#fpv">FPV</a></li>
     <li><a href="#" class="active">Travel</a></li>
-    <li><a href="index.html#contact" style="color:var(--amber)">Book a Shoot</a></li>
+    <li><a href="index.html#contact" style="color:var(--amber)">Contact</a></li>
   </ul>
 </nav>
 
