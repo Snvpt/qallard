@@ -651,10 +651,13 @@
         </div>
       `).join('');
 
-      const frames = Array.from(zoomSticky.querySelectorAll('.zoom-frame'));
+      // Scale is applied to the full-viewport .zoom-item wrappers (not the
+      // inner frames) so every photo scales around the viewport centre — the
+      // centred photo grows to fill the screen while the offset ones fly out.
+      const items = Array.from(zoomSticky.querySelectorAll('.zoom-item'));
 
       if (reducedMotion) {
-        frames.forEach(f => gsap.set(f, { scale: 1 }));
+        items.forEach(el => gsap.set(el, { scale: 1 }));
         return;
       }
 
@@ -664,9 +667,9 @@
         end: 'bottom bottom',
         scrub: true,
         onUpdate: self => {
-          frames.forEach((f, i) => {
+          items.forEach((el, i) => {
             const target = ZOOM_SCALES[i % ZOOM_SCALES.length];
-            gsap.set(f, { scale: 1 + self.progress * (target - 1) });
+            gsap.set(el, { scale: 1 + self.progress * (target - 1) });
           });
         }
       });
