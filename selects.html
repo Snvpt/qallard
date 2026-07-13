@@ -485,6 +485,7 @@
     <button class="filter-btn" data-cat="street">Street</button>
     <button class="filter-btn" data-cat="aerial">Aerial</button>
     <button class="filter-btn" data-cat="night">Night</button>
+    <button class="filter-btn" data-cat="auto">Auto</button>
   </div>
 
   <!-- Filmstrip -->
@@ -553,9 +554,36 @@
       // Night
       { src: 'Selects Photos/web/DSC03460-2.jpg',  caption: 'Afterburner',            cat: 'night' },
       { src: 'Selects Photos/web/DSC03477.jpg',    caption: 'Finale, color',          cat: 'night' },
+
+      // Street (round 2)
+      { src: 'Selects Photos/web/DSC03051.jpg',    caption: 'Straight up',            cat: 'street', portrait: true },
+      { src: 'Selects Photos/web/DSC03131.jpg',    caption: 'Brooklyn Bridge tower',  cat: 'street' },
+      { src: 'Selects Photos/web/DSC03156.jpg',    caption: 'Through the cables',     cat: 'street' },
+      { src: 'Selects Photos/web/DSC03177.jpg',    caption: 'Converging',             cat: 'street' },
+      { src: 'Selects Photos/web/DSC03178.jpg',    caption: 'Coneflowers',            cat: 'street', portrait: true },
+
+      // Aerial (round 2)
+      { src: 'Selects Photos/web/DSC03238.jpg',    caption: 'Two bridges, wider',     cat: 'aerial', portrait: true },
+      { src: 'Selects Photos/web/DSC03272.jpg',    caption: 'Two bridges, dusk',      cat: 'aerial', portrait: true },
+
+      // Night (round 2)
+      { src: 'Selects Photos/web/DSC03463.jpg',    caption: 'Afterburner, closer',    cat: 'night' },
+      { src: 'Selects Photos/web/DSC03483.jpg',    caption: 'Finale, green',          cat: 'night' },
+      { src: 'Selects Photos/web/DSC03542.jpg',    caption: 'Finale, gold',           cat: 'night' },
+
+      // Auto
+      { src: 'Selects Photos/web/DSC03204-2.jpg',  caption: 'Cybertruck, SoHo',       cat: 'auto', portrait: true },
+      { src: 'Selects Photos/web/DSC03813.jpg',    caption: 'GT-R, palms',            cat: 'auto', portrait: true },
+      { src: 'Selects Photos/web/DSC03939.jpg',    caption: 'Bridge run',             cat: 'auto' },
+      { src: 'Selects Photos/web/DSC03965.jpg',    caption: 'Tunnel vision',          cat: 'auto' },
+      { src: 'Selects Photos/web/DSC04018.jpg',    caption: 'Track day',              cat: 'auto', portrait: true },
+      { src: 'Selects Photos/web/DSC04037.jpg',    caption: 'Profile, silver',        cat: 'auto' },
+      { src: 'Selects Photos/web/DSC04040.jpg',    caption: 'Profile, black',         cat: 'auto' },
+      { src: 'Selects Photos/web/DSC04050.jpg',    caption: 'Profile, gold',          cat: 'auto' },
+      { src: 'Selects Photos/web/DSC04056.jpg',    caption: 'The lineup',             cat: 'auto' },
     ];
 
-    const CAT_LABELS = { street: 'Street', aerial: 'Aerial', night: 'Night' };
+    const CAT_LABELS = { street: 'Street', aerial: 'Aerial', night: 'Night', auto: 'Auto' };
 
     const strip        = document.getElementById('strip');
     const stripSection = document.getElementById('stripSection');
