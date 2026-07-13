@@ -598,7 +598,7 @@
       const shots = SHOTS.filter(s => cat === 'all' || s.cat === cat);
       strip.innerHTML = shots.map((s, i) => `
         <figure class="shot${s.portrait ? ' shot--portrait' : ''}">
-          <img src="${encodeURI(s.src)}" alt="${s.caption}" loading="${i < 2 ? 'eager' : 'lazy'}" />
+          <img src="${encodeURI(s.src)}" alt="${s.caption}" loading="eager" />
           <figcaption class="shot-caption">${s.caption}</figcaption>
           <span class="shot-cat">${CAT_LABELS[s.cat]}</span>
         </figure>
@@ -608,11 +608,33 @@
       buildStrip(shots.length);
     }
 
+    // Every shot's width depends on its own aspect ratio, which the browser
+    // only knows once the image has loaded — so the strip's true scrollWidth
+    // (and therefore how far you need to scroll to see the last photo) isn't
+    // final until every image in it has decoded. Wait for that before wiring
+    // up the scroll range, otherwise the tail end of the strip gets cut off.
     function buildStrip(count) {
       if (stripTween) { stripTween.scrollTrigger.kill(); stripTween.kill(); stripTween = null; }
       gsap.set(strip, { x: 0 });
       if (isMobile() || reducedMotion) return; // vertical stack on mobile / reduced motion
 
+      const buildId = ++buildStrip._id;
+      const imgs = Array.from(strip.querySelectorAll('img'));
+      const waits = imgs.map(img => new Promise(resolve => {
+        if (img.complete) return resolve();
+        const done = () => resolve();
+        img.addEventListener('load', done, { once: true });
+        img.addEventListener('error', done, { once: true });
+        setTimeout(done, 4000); // never let one bad image hang the whole strip
+      }));
+      Promise.all(waits).then(() => {
+        if (buildId !== buildStrip._id) return; // filter changed again before this finished
+        wireStripScroll(count);
+      });
+    }
+    buildStrip._id = 0;
+
+    function wireStripScroll(count) {
       stripTween = gsap.to(strip, {
         x: () => -(strip.scrollWidth - window.innerWidth),
         ease: 'none',
