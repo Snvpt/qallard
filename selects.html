@@ -614,7 +614,11 @@
     // final until every image in it has decoded. Wait for that before wiring
     // up the scroll range, otherwise the tail end of the strip gets cut off.
     function buildStrip(count) {
-      if (stripTween) { stripTween.scrollTrigger.kill(); stripTween.kill(); stripTween = null; }
+      if (stripTween) {
+        if (stripTween.scrollTrigger) stripTween.scrollTrigger.kill();
+        stripTween.kill();
+        stripTween = null;
+      }
       gsap.set(strip, { x: 0 });
       if (isMobile() || reducedMotion) return; // vertical stack on mobile / reduced motion
 
@@ -629,21 +633,33 @@
       }));
       Promise.all(waits).then(() => {
         if (buildId !== buildStrip._id) return; // filter changed again before this finished
-        wireStripScroll(count);
+        // Let the browser actually paint the now-loaded images before measuring —
+        // 'load' firing doesn't guarantee layout has settled this same tick.
+        // (setTimeout, not rAF — rAF can be paused indefinitely in background tabs.)
+        setTimeout(() => {
+          if (buildId !== buildStrip._id) return;
+          wireStripScroll(count);
+        }, 50);
       });
     }
     buildStrip._id = 0;
 
+    // Small cushion added to the scroll distance so the last photo is
+    // guaranteed fully clear of the viewport edge, even if scrollWidth was
+    // measured a beat before the very last reflow settled.
+    const STRIP_END_PADDING = 120;
+
     function wireStripScroll(count) {
+      const getDistance = () => Math.max(0, strip.scrollWidth - window.innerWidth) + STRIP_END_PADDING;
       stripTween = gsap.to(strip, {
-        x: () => -(strip.scrollWidth - window.innerWidth),
+        x: () => -getDistance(),
         ease: 'none',
         scrollTrigger: {
           trigger: stripSection,
           pin: true,
           scrub: 0.6,
           start: 'top top',
-          end: () => '+=' + (strip.scrollWidth - window.innerWidth),
+          end: () => '+=' + getDistance(),
           invalidateOnRefresh: true,
           onUpdate: self => {
             const idx = Math.min(count, Math.max(1, Math.round(self.progress * (count - 1)) + 1));
@@ -652,6 +668,9 @@
         }
       });
       ScrollTrigger.refresh();
+      // Safety net: catch any late web-font swap or image reflow that landed
+      // just after this refresh.
+      setTimeout(() => ScrollTrigger.refresh(), 400);
     }
 
     // Filters
@@ -666,6 +685,7 @@
     window.addEventListener('load', () => ScrollTrigger.refresh());
     let lastMobile = isMobile();
     window.addEventListener('resize', () => {
+      if (window.innerWidth === 0) return; // ignore transient invalid viewport sizes
       if (isMobile() !== lastMobile) {
         lastMobile = isMobile();
         render(document.querySelector('.filter-btn.active').dataset.cat);
