@@ -174,13 +174,19 @@
     }
 
     /* ── Liquid glass button ── */
+    @property --metal-angle {
+      syntax: '<angle>';
+      initial-value: 0deg;
+      inherits: false;
+    }
+
     .nav-cta {
       display: inline-flex;
       align-items: center;
       position: relative;
       isolation: isolate;
       overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.22);
+      border: none;
       padding: 0.55rem 1.4rem;
       border-radius: 100px;
       color: var(--accent) !important;
@@ -199,10 +205,36 @@
       .nav-cta { backdrop-filter: blur(16px) saturate(180%) url(#glass-distortion); }
     }
 
+    /* Liquid-metal border ring — animated conic gradient masked to a thin edge */
+    .nav-cta::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      border-radius: inherit;
+      padding: 1.5px;
+      background: conic-gradient(from var(--metal-angle),
+        #7a7a7a, #f5f5f5, #5c5c5c, #ffffff, #45454a, #e2e2e2, #7a7a7a);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: metalRotate 5s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes metalRotate {
+      to { --metal-angle: 360deg; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .nav-cta::before { animation: none; }
+    }
+
     .nav-cta::after {
       content: '';
       position: absolute;
       inset: 0;
+      z-index: 2;
       background: linear-gradient(115deg, transparent 25%, rgba(255,255,255,0.28) 42%, transparent 58%);
       transform: translateX(-130%);
       transition: transform 0.7s var(--ease-out);
