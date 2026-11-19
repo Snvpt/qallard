@@ -1567,7 +1567,7 @@
           <img src="Hero Header/hero-aerial.jpg" alt="Aerial drone view of waves breaking on a Santa Cruz beach" fetchpriority="high" />
         </figure>
         <figure class="hero-frame">
-          <img src="Hero Header/hero-city.jpg" alt="Lower Manhattan skyline at dusk from across the water" />
+          <img src="Hero Header/hero-fuego.jpg" alt="Volcán de Fuego erupting at night, glowing lava and sparks streaming down the cone" />
         </figure>
         <figure class="hero-frame">
           <img src="Hero Header/hero-interior.jpg" alt="Coastal living room with panoramic ocean view" />
@@ -1578,7 +1578,7 @@
       <!-- Frame indicator -->
       <div class="hero-index" id="heroIndex">
         <button type="button" class="hero-index-item active" aria-label="Show aerial image">01 <span class="hero-index-cap">Aerial</span></button>
-        <button type="button" class="hero-index-item" aria-label="Show city image">02 <span class="hero-index-cap">City</span></button>
+        <button type="button" class="hero-index-item" aria-label="Show volcano image">02 <span class="hero-index-cap">Volcano</span></button>
         <button type="button" class="hero-index-item" aria-label="Show interior image">03 <span class="hero-index-cap">Interior</span></button>
         <div class="hero-arrows">
           <button type="button" class="hero-arrow" id="heroPrev" aria-label="Previous image">
@@ -2355,6 +2355,7 @@
       { name:"Port-au-Prince", country:"Haiti", lat:18.59, lon:-72.31 },
       { name:"Copenhagen", country:"Denmark", lat:55.68, lon:12.57 },
       { name:"Bucharest", country:"Romania", lat:44.43, lon:26.10 },
+      { name:"Antigua", country:"Guatemala", lat:14.56, lon:-90.73 },
     ];
 
     const cyclePlace  = document.getElementById('cycle-place');
@@ -2388,6 +2389,7 @@
       "Haiti":       "travel/Haiti/IMG_5564.jpeg",
       "Denmark":     "travel/Denmark/IMG_9038.JPG",
       "Romania":     "travel/Romania/IMG_9487.JPG",
+      "Guatemala":   "travel/Guatemala/fuego-eruption.jpg",
     };
 
     function fmt(val, posLabel, negLabel) {
@@ -2414,7 +2416,7 @@
     setInterval(nextDest, 4000);
 
     // ── Travel: marquee ──
-    const COUNTRIES = ["United States","Mexico","Canada","Haiti","Spain","France","Monaco","England","Italy","Vatican City","Ireland","Czech Republic","Germany","Indonesia","Singapore","Malaysia","Thailand","Sri Lanka","UAE","Greece","Serbia","Croatia","Slovenia","Austria","Slovakia","Hungary","Scotland","Denmark","Sweden","Poland","Belgium","Netherlands","Romania","Moldova","Transnistria","Turkey","Vietnam","Cambodia","Philippines","Japan","South Korea","China","Taiwan"];
+    const COUNTRIES = ["United States","Mexico","Guatemala","Canada","Haiti","Spain","France","Monaco","England","Italy","Vatican City","Ireland","Czech Republic","Germany","Indonesia","Singapore","Malaysia","Thailand","Sri Lanka","UAE","Greece","Serbia","Croatia","Slovenia","Austria","Slovakia","Hungary","Scotland","Denmark","Sweden","Poland","Belgium","Netherlands","Romania","Moldova","Transnistria","Turkey","Vietnam","Cambodia","Philippines","Japan","South Korea","China","Taiwan"];
     const track = document.getElementById('marqueeTrack');
     if (track) {
       const html = COUNTRIES.map(c => `<span class="travel-marquee-item">${c}</span><span class="travel-marquee-sep">·</span>`).join('');

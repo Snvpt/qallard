@@ -546,6 +546,7 @@
     <button class="filter-btn" data-cat="aerial">Aerial</button>
     <button class="filter-btn" data-cat="night">Night</button>
     <button class="filter-btn" data-cat="auto">Auto</button>
+    <button class="filter-btn" data-cat="guatemala">Guatemala</button>
   </div>
 
   <!-- Filmstrip -->
@@ -649,9 +650,25 @@
 
       // Aerial (round 3)
       { src: 'Selects Photos/web/trees-from-above.jpg', caption: 'Road through the trees', cat: 'aerial' },
+
+      // Guatemala
+      { src: 'travel/Guatemala/fuego-eruption.jpg',       caption: 'Fuego, erupting',        cat: 'guatemala' },
+      { src: 'travel/Guatemala/fuego-plume.jpg',          caption: 'Ash column',             cat: 'guatemala', portrait: true },
+      { src: 'travel/Guatemala/fuego-viewpoint.jpg',      caption: 'Watching Fuego',         cat: 'guatemala', portrait: true },
+      { src: 'travel/Guatemala/fuego-backpack.jpg',       caption: 'The long look',          cat: 'guatemala', portrait: true },
+      { src: 'travel/Guatemala/acatenango-ridge.jpg',     caption: 'Ridge, Acatenango',      cat: 'guatemala', portrait: true },
+      { src: 'travel/Guatemala/santa-catalina-arch.jpg',  caption: 'Santa Catalina Arch',    cat: 'guatemala', portrait: true },
+      { src: 'travel/Guatemala/antigua-tuk-tuk.jpg',      caption: 'Tuk-tuk, Antigua',       cat: 'guatemala', portrait: true },
+      { src: 'travel/Guatemala/antigua-dusk.jpg',         caption: 'Dusk, Antigua',          cat: 'guatemala', portrait: true },
+      { src: 'travel/Guatemala/antigua-gold-wall.jpg',    caption: 'Morning walk',           cat: 'guatemala', portrait: true },
+      { src: 'travel/Guatemala/antigua-alto.jpg',         caption: 'Alto',                   cat: 'guatemala', portrait: true },
+      { src: 'travel/Guatemala/antigua-ruins-oculus.jpg', caption: 'Open to the sky',        cat: 'guatemala', portrait: true },
+      { src: 'travel/Guatemala/horse-portrait.jpg',       caption: 'Horse',                  cat: 'guatemala', portrait: true },
+      { src: 'travel/Guatemala/pack-horse.jpg',           caption: 'Pack horse',             cat: 'guatemala', portrait: true },
+      { src: 'travel/Guatemala/reflection.jpg',           caption: 'Reflection',             cat: 'guatemala', portrait: true },
     ];
 
-    const CAT_LABELS = { street: 'Street', aerial: 'Aerial', night: 'Night', auto: 'Auto' };
+    const CAT_LABELS = { street: 'Street', aerial: 'Aerial', night: 'Night', auto: 'Auto', guatemala: 'Guatemala' };
 
     const strip        = document.getElementById('strip');
     const stripSection = document.getElementById('stripSection');
