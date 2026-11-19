@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quinn Allard — Santa Cruz Real Estate &amp; Drone Photography</title>
-  <meta name="description" content="Real estate, aerial, and FPV drone photography in Santa Cruz County, CA. Interiors, exteriors, and cinematic aerials — helping properties be seen the way they deserve. FAA Part 107 certified." />
+  <title>Quinn Allard — Photographer, Santa Cruz CA</title>
+  <meta name="description" content="Photography by Quinn Allard: street, night, aerial and travel work from Santa Cruz and beyond, plus real estate and aerial commissions." />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Quinn Allard — Santa Cruz Real Estate &amp; Drone Photography" />
-  <meta property="og:description" content="Real estate, aerial, and FPV drone photography in Santa Cruz County, CA. FAA Part 107 certified." />
+  <meta property="og:title" content="Quinn Allard — Photographer, Santa Cruz CA" />
+  <meta property="og:description" content="Street, night, aerial and travel photography from Santa Cruz and beyond." />
   <meta property="og:image" content="https://snvpt.github.io/qallard/Hero%20Header/hero-aerial.jpg" />
   <meta property="og:url" content="https://snvpt.github.io/qallard/" />
   <meta name="twitter:card" content="summary_large_image" />
@@ -172,6 +172,7 @@
     }
 
     /* ── Liquid glass buttons ── */
+    .nav-cta::before, .btn-primary::before, .btn-submit::before { display: none !important; }
     @property --metal-angle {
       syntax: '<angle>';
       initial-value: 0deg;
@@ -183,14 +184,16 @@
       isolation: isolate;
       overflow: hidden;
       border: none;
-      background: rgba(200,169,110,0.14);
-      backdrop-filter: blur(16px) saturate(180%);
-      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(5px) saturate(170%) brightness(1.08);
+      -webkit-backdrop-filter: blur(5px) saturate(170%) brightness(1.08);
       box-shadow:
-        inset 0 1px 1px rgba(255,255,255,0.35),
-        inset 0 -1px 1px rgba(0,0,0,0.25),
-        inset 0 0 12px rgba(200,169,110,0.15),
-        0 4px 20px rgba(0,0,0,0.35);
+        inset 0 0 0 1px rgba(255,255,255,0.16),
+        inset 0 1px 0 rgba(255,255,255,0.45),
+        inset 0 -1px 0 rgba(255,255,255,0.08),
+        inset 0 0 14px rgba(255,255,255,0.06),
+        0 6px 18px rgba(0,0,0,0.22);
+      text-shadow: 0 1px 6px rgba(0,0,0,0.35);
       transition: transform 0.4s var(--ease-out), box-shadow 0.4s var(--ease-out), background 0.4s var(--ease-out);
     }
 
@@ -221,7 +224,7 @@
 
     @supports (backdrop-filter: url(#x)) or (-webkit-backdrop-filter: url(#x)) {
       .nav-cta, .btn-primary, .btn-submit {
-        backdrop-filter: blur(16px) saturate(180%) url(#glass-distortion);
+        backdrop-filter: blur(5px) saturate(170%) brightness(1.08) url(#glass-distortion);
       }
     }
 
@@ -278,12 +281,12 @@
 
     .nav-cta:hover {
       transform: scale(1.04);
-      background: rgba(200,169,110,0.24) !important;
+      background: rgba(255,255,255,0.10) !important;
       box-shadow:
-        inset 0 1px 1px rgba(255,255,255,0.45),
-        inset 0 -1px 1px rgba(0,0,0,0.2),
-        inset 0 0 14px rgba(200,169,110,0.25),
-        0 6px 24px rgba(0,0,0,0.4);
+        inset 0 0 0 1px rgba(255,255,255,0.28),
+        inset 0 1px 0 rgba(255,255,255,0.6),
+        inset 0 0 16px rgba(255,255,255,0.1),
+        0 8px 22px rgba(0,0,0,0.28);
     }
 
     /* ── Hero — cinematic photo sequence ── */
@@ -595,12 +598,12 @@
 
     .btn-primary:hover {
       transform: scale(1.045);
-      background: rgba(200,169,110,0.24);
+      background: rgba(255,255,255,0.10);
       box-shadow:
-        inset 0 1px 1px rgba(255,255,255,0.45),
-        inset 0 -1px 1px rgba(0,0,0,0.2),
-        inset 0 0 16px rgba(200,169,110,0.25),
-        0 6px 28px rgba(0,0,0,0.4);
+        inset 0 0 0 1px rgba(255,255,255,0.28),
+        inset 0 1px 0 rgba(255,255,255,0.6),
+        inset 0 0 16px rgba(255,255,255,0.1),
+        0 8px 24px rgba(0,0,0,0.28);
     }
 
     .btn-ghost {
@@ -835,6 +838,22 @@
     }
 
     .g-item:hover img { transform: scale(1.06); }
+
+    .g-item figcaption {
+      position: absolute; left: 0; right: 0; bottom: 0; z-index: 1;
+      padding: 3.5rem 1.2rem 1.1rem;
+      background: linear-gradient(to top, rgba(8,8,8,0.85), rgba(8,8,8,0));
+      display: flex; flex-direction: column; gap: 0.25rem;
+      pointer-events: none;
+    }
+    .g-kick { font-size: 0.62rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); }
+    .g-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; color: var(--text); }
+    .g-note {
+      font-size: 0.78rem; line-height: 1.5; color: var(--muted);
+      max-height: 0; opacity: 0; overflow: hidden;
+      transition: max-height 0.5s var(--ease-out), opacity 0.4s;
+    }
+    .g-item:hover .g-note, .g-item:focus-within .g-note { max-height: 6em; opacity: 1; }
 
     .g1 { grid-column: span 5; height: 380px; }
     .g2 { grid-column: span 4; height: 380px; }
@@ -1396,12 +1415,12 @@
 
     .btn-submit:hover {
       transform: scale(1.045);
-      background: rgba(200,169,110,0.24);
+      background: rgba(255,255,255,0.10);
       box-shadow:
-        inset 0 1px 1px rgba(255,255,255,0.45),
-        inset 0 -1px 1px rgba(0,0,0,0.2),
-        inset 0 0 16px rgba(200,169,110,0.25),
-        0 6px 28px rgba(0,0,0,0.4);
+        inset 0 0 0 1px rgba(255,255,255,0.28),
+        inset 0 1px 0 rgba(255,255,255,0.6),
+        inset 0 0 16px rgba(255,255,255,0.1),
+        0 8px 24px rgba(0,0,0,0.28);
     }
 
     /* ── Footer ── */
@@ -1498,7 +1517,9 @@
       .bento-card--lg, .bento-card--sm, .bento-card--wide, .bento-card--fill { grid-column: span 1; min-height: 320px; }
 
       .gallery-grid { grid-template-columns: 1fr 1fr; }
-      .g1, .g2, .g3, .g4, .g5, .g6 { grid-column: span 1; height: 200px; }
+      .gallery-grid { grid-template-columns: 1fr; }
+      .g1, .g2, .g3, .g4, .g5, .g6 { grid-column: span 1; height: 320px; }
+      .g-note { max-height: 6em; opacity: 1; }
 
       .fpv-inner, .realestate-inner { grid-template-columns: 1fr; gap: 2.5rem; }
       .fpv-visual { height: 340px; }
@@ -1535,10 +1556,10 @@
   <nav>
     <a href="#" class="nav-logo serif">Q. Allard</a>
     <ul class="nav-links">
-      <li><a href="#services">Work</a></li>
-      <li><a href="realestate.html">Real Estate</a></li>
       <li><a href="selects.html">Selects</a></li>
       <li><a href="travel.html">Travel</a></li>
+      <li><a href="#stories">Stories</a></li>
+      <li><a href="realestate.html">Commissions</a></li>
       <li><a href="#contact" class="nav-cta">Contact</a></li>
     </ul>
     <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
@@ -1548,10 +1569,10 @@
 
   <!-- Mobile menu overlay -->
   <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
-    <a href="#services">Work</a>
-    <a href="realestate.html">Real Estate</a>
     <a href="selects.html">Selects</a>
     <a href="travel.html">Travel</a>
+    <a href="#stories">Stories</a>
+    <a href="realestate.html">Commissions</a>
     <a href="#contact" class="mobile-cta">Contact</a>
   </div>
 
@@ -1595,18 +1616,18 @@
         <div class="hero-overlay-left">
           <div class="hero-tag reveal">Santa Cruz, CA</div>
           <h1 class="hero-title reveal reveal-delay-1">
-            Real Estate<br>
-            & Drone<br>
-            <em>Photography.</em>
+            Photographs<br>
+            of places<br>
+            <em>& light.</em>
           </h1>
         </div>
         <div class="hero-overlay-right reveal reveal-delay-2">
           <p class="hero-sub">
-            Helping properties and places be seen the way they deserve — from ground level to the air above.
+            Quinn Allard. Santa Cruz and beyond.
           </p>
           <div class="hero-actions">
-            <a href="#services" class="btn-primary">View Portfolio</a>
-            <a href="#contact" class="btn-ghost">Contact <span class="arrow">&#8594;</span></a>
+            <a href="selects.html" class="btn-primary">View Selects</a>
+            <a href="#stories" class="btn-ghost">Read the stories <span class="arrow">&#8594;</span></a>
           </div>
         </div>
       </div>
@@ -1619,47 +1640,57 @@
 
   <!-- Stats bar -->
 
-  <!-- Disciplines — Editorial Panels -->
+  <!-- Bodies of work -->
   <section class="disciplines" id="services">
 
     <div class="disciplines-header">
-      <div class="section-tag reveal">Disciplines</div>
+      <div class="section-tag reveal">Bodies of work</div>
     </div>
 
-    <!-- 01 — Real Estate -->
     <div class="disc-panel reveal">
       <div class="disc-photo">
-        <img src="Listings/Seascape Resort Unit 60/web/211-00.jpg" alt="Seascape Resort Unit 60 ocean view" />
+        <img src="Selects Photos/web/DSC03409.jpg" alt="Airliner escorted by fighter jets during a flyover" />
       </div>
       <div class="disc-text">
         <span class="disc-num">01</span>
-        <h2 class="disc-title">Real Estate<br>Photography</h2>
-        <p class="disc-body">Real estate photography along the Santa Cruz County coast — interiors, exteriors, and aerial, whatever the property needs.</p>
-        <a href="realestate.html" class="disc-cta">View Listings →</a>
+        <h2 class="disc-title">The Selects</h2>
+        <p class="disc-body">Street, night, aerial, cars.</p>
+        <a href="selects.html" class="disc-cta">Open the Selects →</a>
       </div>
     </div>
 
-    <!-- 02 — FPV & Aerial -->
     <div class="disc-panel disc-panel--rev reveal">
       <div class="disc-photo">
-        <img src="Mavic Seascape Ocean.jpg" alt="Mavic aerial Seascape ocean" />
+        <img src="Mavic Seascape Ocean.jpg" alt="Aerial view of the coastline at Seascape" />
       </div>
       <div class="disc-text">
         <span class="disc-num">02</span>
-        <h2 class="disc-title">FPV &<br>Aerial Cinematics</h2>
-        <p class="disc-body">I got into drones for the same reason I got into travel — perspective. There's something about being above it that makes you see it differently. Not just the view. The whole thing.</p>
-        <a href="#fpv" class="disc-cta">See the Work →</a>
+        <h2 class="disc-title">From Above</h2>
+        <p class="disc-body">Perspective, from the air.</p>
+        <a href="#fpv" class="disc-cta">See the footage →</a>
+      </div>
+    </div>
+
+    <div class="disc-panel reveal">
+      <div class="disc-photo">
+        <img src="travel/Guatemala/fuego-eruption.jpg" alt="Volcán de Fuego erupting at night" />
+      </div>
+      <div class="disc-text">
+        <span class="disc-num">03</span>
+        <h2 class="disc-title">The Atlas</h2>
+        <p class="disc-body">A globe of everywhere I've been.</p>
+        <a href="travel.html" class="disc-cta">Open the Atlas →</a>
       </div>
     </div>
 
   </section>
 
-  <!-- Real Estate Section -->
+  <!-- Commissioned work -->
   <section id="realestate">
     <div class="realestate-inner">
       <div class="re-gallery reveal">
         <div class="re-img re-img--tall">
-          <img src="Listings/Seascape Resort Unit 60/web/211-00.jpg" alt="Interior living space" />
+          <img src="Listings/Seascape Resort Unit 60/web/211-00.jpg" alt="Interior living space with ocean view" />
         </div>
         <div style="display: flex; flex-direction: column; gap: 1rem;">
           <div class="re-img">
@@ -1671,36 +1702,15 @@
         </div>
       </div>
       <div class="re-content reveal reveal-delay-1">
-        <div class="section-tag">Real Estate</div>
-        <h2 class="section-title">Listings that<br><em>command attention.</em></h2>
-        <p style="color: var(--muted); font-size: 0.9rem; line-height: 1.8; margin-top: 1.5rem; max-width: 38ch;">
-          Every shoot is a collaboration — understanding the space, the light, and the story a buyer needs to feel. Clean compositions, true-to-life color, delivered fast.
+        <div class="section-tag">Commissioned work</div>
+        <h2 class="section-title">Spaces, <em>on assignment.</em></h2>
+        <p style="color: var(--muted); font-size: 0.9rem; line-height: 1.8; margin-top: 1.5rem; max-width: 40ch;">
+          Real estate and aerials around Santa Cruz County.
         </p>
-        <div class="re-features">
-          <div class="re-feature">
-            <div class="re-feature-icon">I</div>
-            <div class="re-feature-title">Flambient Interiors</div>
-            <div class="re-feature-desc">Flash-ambient blending for perfectly exposed rooms regardless of natural light.</div>
-          </div>
-          <div class="re-feature">
-            <div class="re-feature-icon">II</div>
-            <div class="re-feature-title">Twilight Exteriors</div>
-            <div class="re-feature-desc">Golden hour and blue hour compositions that set listings apart.</div>
-          </div>
-          <div class="re-feature">
-            <div class="re-feature-icon">III</div>
-            <div class="re-feature-title">Aerial Overview</div>
-            <div class="re-feature-desc">FAA-certified drone photos showing lot, location, and neighborhood context.</div>
-          </div>
-          <div class="re-feature">
-            <div class="re-feature-icon">IV</div>
-            <div class="re-feature-title">Same-Week Delivery</div>
-            <div class="re-feature-desc">Fully edited, full-resolution gallery delivered within days of the shoot.</div>
-          </div>
-        </div>
+        <p style="color: var(--accent); font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase; margin: 1.5rem 0 2rem;">FAA Part 107 certified</p>
         <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;">
-          <a href="realestate.html" class="btn-primary">View Listings</a>
-          <a href="#contact" class="btn-ghost">Contact <span class="arrow">&#8594;</span></a>
+          <a href="realestate.html" class="btn-primary">See the listings</a>
+          <a href="#contact" class="btn-ghost">Book a shoot <span class="arrow">&#8594;</span></a>
         </div>
       </div>
     </div>
@@ -1718,18 +1728,17 @@
           playsinline
         ></video>
         <div class="fpv-badge">
-          <div class="fpv-badge-label">FPV Cinematic</div>
+          <div class="fpv-badge-label">FPV</div>
           <div class="fpv-badge-val">Original Footage</div>
         </div>
       </div>
       <div class="fpv-content reveal reveal-delay-1">
-        <div class="section-tag">FPV & Aerial</div>
+        <div class="section-tag">From Above</div>
         <h2 class="section-title">A different<br><em>angle.</em></h2>
         <p style="color: var(--muted); font-size: 0.9rem; line-height: 1.8; margin-top: 1.5rem; max-width: 38ch;">
-          HD cinematic footage — from sweeping aerials to tight cinematic passes.
+          Original FPV footage.
         </p>
-        <p style="color: var(--accent); font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase; margin-top: 1rem; margin-bottom: 1.5rem;">FAA Part 107 Certified</p>
-        <a href="#contact" class="btn-primary">Contact</a>
+        <a href="selects.html" class="btn-primary" style="margin-top:1.5rem">See the aerial selects</a>
       </div>
     </div>
   </section>
@@ -1737,15 +1746,15 @@
   <!-- Travel -->
   <section id="travel">
     <div class="travel-section-head">
-      <div class="section-tag reveal">Personal</div>
-      <h2 class="section-title reveal reveal-delay-1">Life between<br><em>the shoots.</em></h2>
+      <div class="section-tag reveal">The Atlas</div>
+      <h2 class="section-title reveal reveal-delay-1">Places I <em>carried a camera.</em></h2>
     </div>
 
     <div class="travel-teaser reveal reveal-delay-2">
       <!-- Left: text + CTA -->
       <div class="travel-teaser-text">
         <p class="travel-teaser-desc">
-          These aren't portfolio shots — just places I've been lucky enough to see and wanted to bring something back from.
+          Photographs from the road.
         </p>
         <div class="travel-cycle">
           <div class="travel-cycle-label">Currently browsing</div>
@@ -1767,34 +1776,40 @@
     </div>
   </section>
 
-  <!-- Gallery -->
+  <!-- Stories -->
   <section id="gallery">
     <div class="gallery-header">
       <div>
-        <div class="section-tag reveal">Selected Work</div>
-        <h2 class="section-title reveal reveal-delay-1">Recent shoots</h2>
+        <div class="section-tag reveal" id="stories">Stories</div>
+        <h2 class="section-title reveal reveal-delay-1">Behind <em>the frames.</em></h2>
       </div>
-      <a href="#contact" class="btn-ghost reveal reveal-delay-2">All projects <span class="arrow">&#8594;</span></a>
+      <a href="selects.html" class="btn-ghost reveal reveal-delay-2">All selects <span class="arrow">&#8594;</span></a>
     </div>
     <div class="gallery-grid reveal">
-      <div class="g-item g1">
-        <img src="Listings/Seascape Resort Unit 302/web/302 002.jpg" alt="Seascape Resort Unit 302 bedroom" />
-      </div>
-      <div class="g-item g2">
-        <img src="Selects Photos/web/DSC03409.jpg" alt="Airliner escorted by fighter jets during a flyover" />
-      </div>
-      <div class="g-item g3">
-        <img src="Selects Photos/web/DSC03965.jpg" alt="Mustang driving through a tunnel at speed" />
-      </div>
-      <div class="g-item g4">
-        <img src="Listings/Seascape Resort Unit 60/web/211-001.jpg" alt="Seascape Resort Unit 60 interior" />
-      </div>
-      <div class="g-item g5">
-        <img src="travel/NYC : DC/web/DSC03092.jpg" alt="Times Square traffic at night" />
-      </div>
-      <div class="g-item g6">
-        <img src="Listings/Seascape Resort Unit 211/web/211.3 014.jpg" alt="Seascape Resort Unit 211" />
-      </div>
+      <figure class="g-item g1">
+        <img src="travel/Guatemala/fuego-eruption.jpg" alt="Volcán de Fuego erupting at night" loading="lazy" />
+        <figcaption><span class="g-kick">Guatemala</span><span class="g-title">Fuego, erupting</span></figcaption>
+      </figure>
+      <figure class="g-item g2">
+        <img src="Selects Photos/web/DSC03409.jpg" alt="Airliner escorted by fighter jets during a flyover" loading="lazy" />
+        <figcaption><span class="g-kick">Flyover</span><span class="g-title">Escort</span></figcaption>
+      </figure>
+      <figure class="g-item g3">
+        <img src="Selects Photos/web/DSC03965.jpg" alt="Mustang driving through a tunnel at speed" loading="lazy" />
+        <figcaption><span class="g-kick">Auto</span><span class="g-title">Tunnel run</span></figcaption>
+      </figure>
+      <figure class="g-item g4">
+        <img src="Listings/Seascape Resort Unit 60/web/211-001.jpg" alt="Seascape Resort interior" loading="lazy" />
+        <figcaption><span class="g-kick">Interior</span><span class="g-title">Seascape, Unit 60</span></figcaption>
+      </figure>
+      <figure class="g-item g5">
+        <img src="travel/NYC : DC/web/DSC03092.jpg" alt="Times Square traffic at night" loading="lazy" />
+        <figcaption><span class="g-kick">New York</span><span class="g-title">Times Square, after dark</span></figcaption>
+      </figure>
+      <figure class="g-item g6">
+        <img src="Listings/Seascape Resort Unit 211/web/211.3 014.jpg" alt="Seascape Resort Unit 211" loading="lazy" />
+        <figcaption><span class="g-kick">Interior</span><span class="g-title">Seascape, Unit 211</span></figcaption>
+      </figure>
     </div>
   </section>
 
@@ -1806,6 +1821,9 @@
     <div class="about-text reveal">
       <h2 class="about-name">Quinn Allard</h2>
       <span class="about-sub">Photographer · Santa Cruz, CA</span>
+      <p style="color: var(--muted); font-size: 0.95rem; line-height: 1.8; max-width: 44ch; margin: 0.75rem 0 0;">
+        Coast, city, air, road.
+      </p>
       <a class="about-ig" href="https://instagram.com/quinstgram" target="_blank" rel="noopener">
         &#64;quinstgram
       </a>
@@ -1818,7 +1836,7 @@
       <div class="section-tag reveal">Get in Touch</div>
       <h2 class="section-title reveal reveal-delay-1">Let's make<br><em>something great.</em></h2>
       <p style="color: var(--muted); font-size: 0.9rem; line-height: 1.8; margin-top: 1.5rem; max-width: 36ch;" class="reveal reveal-delay-2">
-        Available for real estate shoots, FPV cinematic projects, and aerial photography across Santa Cruz County and beyond. Response within 24 hours.
+        Commissions and collaborations. I reply within a day.
       </p>
       <div class="contact-info reveal reveal-delay-3">
         <div class="contact-item">
@@ -1828,10 +1846,6 @@
         <div class="contact-item">
           <span class="contact-item-label">Location</span>
           <span class="contact-item-val">Available Nationwide — Based in Santa Cruz, CA</span>
-        </div>
-        <div class="contact-item">
-          <span class="contact-item-label">Response</span>
-          <span class="contact-item-val">Within 24 hours, typically faster</span>
         </div>
         <div class="contact-item">
           <span class="contact-item-label">Follow</span>
@@ -1862,18 +1876,18 @@
           <label class="form-label">Project Type</label>
           <select class="form-select" name="project_type">
             <option value="" disabled selected>Select a service</option>
-            <option>Real Estate Photography</option>
-            <option>FPV Cinematic</option>
-            <option>Standard Aerial / Drone</option>
-            <option>Full Property Package</option>
-            <option>Other</option>
+            <option>Photography commission</option>
+            <option>Real estate</option>
+            <option>Aerial / FPV</option>
+            <option>Prints or licensing</option>
+            <option>Just saying hi</option>
           </select>
         </div>
         <div class="form-group">
           <label class="form-label">Message</label>
-          <textarea class="form-textarea" name="message" placeholder="Tell me about the shoot — property type, timeline, deliverables needed..." required></textarea>
+          <textarea class="form-textarea" name="message" placeholder="Tell me about the project, timeline and anything you have in mind..." required></textarea>
         </div>
-        <button type="submit" class="btn-submit">Send Inquiry</button>
+        <button type="submit" class="btn-submit">Send message</button>
       </form>
     </div>
   </section>
