@@ -575,6 +575,15 @@
   .display { font-family: 'Archivo', sans-serif; font-stretch: 125%; font-weight: 200; letter-spacing: -0.035em; font-style: normal; }
   .display em { font-style: normal; }
   @media (max-width: 720px) { .nav ul li:not(:first-child):not(:last-child) { display: none; } .nav ul { gap: 1.25rem; } }
+  /* Narrow screens: globe on top, photo panel below it (it used to sit on top of the globe) */
+  @media (max-width: 1100px) {
+    .stage { min-height: 0; }
+    .globe-wrap { position: relative; inset: auto; height: min(92vw, 72vh); margin-top: 4.5rem; padding: 0; justify-content: center; }
+    #globe { width: min(92vw, 72vh); height: min(92vw, 72vh); transform: none; }
+    .overlay { position: static; min-height: 0; grid-template-columns: 1fr; padding: 0 clamp(1.25rem, 3.2vw, 3rem) 3rem; }
+    .lede { position: absolute; top: 5.2rem; left: clamp(1.25rem, 3.2vw, 3rem); z-index: 11; }
+    .photo-panel { grid-column: 1; grid-row: auto; justify-self: center; width: min(520px, 100%); }
+  }
 </style>
 </head>
 <body>
