@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Travel Atlas — Quinn Allard</title>
+<title>Atlas — Quinn Allard</title>
 <meta name="description" content="44 countries through a photographer's lens — a personal travel atlas by Quinn Allard." />
 <link rel="icon" type="image/svg+xml" href="favicon.svg" />
 <meta property="og:type" content="website" />
@@ -15,18 +15,18 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&display=swap" rel="stylesheet">
 
 <style>
   :root {
-    --bg:          #0d100f;
-    --bg-2:        #0f1312;
-    --ink:         #ece8df;
-    --ink-dim:     #a9a79e;
-    --ink-fade:    #6a6964;
-    --amber:       #d4c9a8;   /* soft ivory accent */
-    --amber-deep:  #8a9b8c;   /* muted sage */
-    --gold:        #e8e1cc;
+    --bg:          #161616;
+    --bg-2:        #1b1b1b;
+    --ink:         #ececec;
+    --ink-dim:     #a8a8a8;
+    --ink-fade:    #7c7c7c;
+    --amber:       #ececec;   /* soft ivory accent */
+    --amber-deep:  #8e8e8e;   /* muted sage */
+    --gold:        #ececec;
     --rule:        rgba(236,232,223,0.08);
     --rule-strong: rgba(236,232,223,0.18);
   }
@@ -67,7 +67,7 @@
     position: fixed; top: 0; left: 0; right: 0; z-index: 30;
     display: flex; align-items: center; justify-content: space-between;
     padding: 22px 40px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Archivo', sans-serif;
     font-size: 11px;
     letter-spacing: 0.18em;
     text-transform: uppercase;
@@ -79,7 +79,7 @@
     color: var(--ink);
   }
   .nav .mark .nav-logo {
-    font-family: 'EB Garamond', serif;
+    font-family: 'Newsreader', Georgia, serif;
     font-size: 1.25rem;
     letter-spacing: 0.06em;
     color: var(--ink);
@@ -149,17 +149,17 @@
   }
   .pp-head { border-bottom: 1px solid var(--rule); padding-bottom: 16px; }
   .pp-num {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Archivo', sans-serif;
     font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase;
     color: var(--ink-fade); margin-bottom: 10px;
   }
   .pp-country {
-    font-family: 'EB Garamond', serif;
+    font-family: 'Newsreader', Georgia, serif;
     font-size: 32px; font-style: italic; font-weight: 400;
     color: var(--ink); line-height: 1.05;
   }
   .pp-city {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Archivo', sans-serif;
     font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
     color: var(--ink-dim); margin-top: 4px;
   }
@@ -187,7 +187,7 @@
     background: repeating-linear-gradient(45deg, rgba(236,232,223,0.04) 0 10px, rgba(236,232,223,0.08) 10px 20px), #171b1a;
   }
   .pp-frame .pp-label {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Archivo', sans-serif;
     font-size: 9px; letter-spacing: 0.25em; color: var(--ink-fade);
     position: absolute; bottom: 10px; left: 10px;
   }
@@ -198,7 +198,7 @@
   .pp-foot button {
     background: transparent; border: none;
     color: var(--ink-dim);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Archivo', sans-serif;
     font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
     cursor: pointer; padding: 4px 0;
     transition: color .2s;
@@ -216,7 +216,7 @@
     max-width: 560px;
   }
   .eyebrow {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Archivo', sans-serif;
     font-size: 11px;
     letter-spacing: 0.3em;
     text-transform: uppercase;
@@ -229,7 +229,7 @@
   }
 
   h1.display {
-    font-family: 'EB Garamond', serif;
+    font-family: 'Newsreader', Georgia, serif;
     font-weight: 400;
     font-size: clamp(44px, 5vw, 84px);
     line-height: 0.92;
@@ -244,7 +244,7 @@
   }
 
   .lede p {
-    font-family: 'EB Garamond', serif;
+    font-family: 'Newsreader', Georgia, serif;
     font-size: clamp(17px, 1.3vw, 20px);
     line-height: 1.55;
     color: var(--ink-dim);
@@ -254,7 +254,7 @@
   }
 
   .byline {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Archivo', sans-serif;
     font-size: 10px;
     letter-spacing: 0.22em;
     text-transform: uppercase;
@@ -271,7 +271,7 @@
     border: 1px solid var(--rule);
     backdrop-filter: blur(12px);
     padding: 22px 24px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Archivo', sans-serif;
     font-size: 11px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -285,7 +285,7 @@
     margin-bottom: 14px;
   }
   .location-card .name {
-    font-family: 'EB Garamond', serif;
+    font-family: 'Newsreader', Georgia, serif;
     font-size: 28px;
     font-weight: 400;
     font-style: italic;
@@ -332,7 +332,7 @@
   }
   .stats .group:last-child { border-bottom: none; }
   .stats .label {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Archivo', sans-serif;
     font-size: 10px;
     letter-spacing: 0.3em;
     text-transform: uppercase;
@@ -340,7 +340,7 @@
     margin-bottom: 6px;
   }
   .stats .val {
-    font-family: 'EB Garamond', serif;
+    font-family: 'Newsreader', Georgia, serif;
     font-size: 56px;
     line-height: 1;
     color: var(--ink);
@@ -350,7 +350,7 @@
     font-style: italic; color: var(--amber);
   }
   .stats .unit {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Archivo', sans-serif;
     font-size: 10px;
     letter-spacing: 0.2em;
     color: var(--ink-dim);
@@ -379,7 +379,7 @@
     padding-top: 32px;
   }
   .atlas h2 {
-    font-family: 'EB Garamond', serif;
+    font-family: 'Newsreader', Georgia, serif;
     font-weight: 400;
     font-style: italic;
     font-size: clamp(32px, 3.6vw, 56px);
@@ -388,7 +388,7 @@
     color: var(--ink);
   }
   .atlas .section-head p {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Archivo', sans-serif;
     font-size: 11px;
     letter-spacing: 0.2em;
     text-transform: uppercase;
@@ -422,20 +422,20 @@
     content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--amber);
   }
   .index-item .num {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Archivo', sans-serif;
     font-size: 9px;
     letter-spacing: 0.2em;
     color: var(--ink-fade);
     transition: color .2s;
   }
   .index-item .country {
-    font-family: 'EB Garamond', serif;
+    font-family: 'Newsreader', Georgia, serif;
     font-size: 22px;
     color: var(--ink);
     font-weight: 400;
   }
   .index-item .city {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Archivo', sans-serif;
     font-size: 10px;
     letter-spacing: 0.18em;
     text-transform: uppercase;
@@ -447,7 +447,7 @@
     position: absolute;
     bottom: 40px; left: 64px;
     width: 54px; height: 54px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Archivo', sans-serif;
     font-size: 10px;
     letter-spacing: 0.2em;
     color: var(--ink-fade);
@@ -475,7 +475,7 @@
   .tick { display: none;
     position: absolute;
     bottom: 40px; right: 64px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Archivo', sans-serif;
     font-size: 10px;
     letter-spacing: 0.25em;
     color: var(--ink-fade);
@@ -498,7 +498,7 @@
     border: 1px solid var(--rule-strong);
     backdrop-filter: blur(14px);
     padding: 16px 18px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Archivo', sans-serif;
     font-size: 11px;
     color: var(--ink-dim);
     z-index: 50;
@@ -528,7 +528,7 @@
     border: 1px solid var(--rule-strong);
     color: var(--ink-dim);
     padding: 4px 10px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Archivo', sans-serif;
     font-size: 10px;
     letter-spacing: 0.15em;
     cursor: pointer;
@@ -553,7 +553,7 @@
   .loading {
     position: absolute; inset: 0;
     display: flex; align-items: center; justify-content: center;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Archivo', sans-serif;
     font-size: 10px;
     letter-spacing: 0.3em;
     color: var(--ink-fade);
@@ -567,6 +567,14 @@
     animation: blink 1.2s ease-in-out infinite;
   }
   .loaded .loading { display: none; }
+  /* ── Site refresh: shared system with the home page ── */
+  body * { text-transform: none !important; }
+  .nav { font-size: 0.95rem; letter-spacing: 0; padding: 18px clamp(1.25rem, 3.2vw, 3rem); }
+  .nav .mark .nav-logo { font-family: 'Archivo', sans-serif; font-size: 1rem; font-weight: 500; letter-spacing: -0.01em; }
+  .nav ul { gap: 2rem; }
+  .display { font-family: 'Archivo', sans-serif; font-stretch: 125%; font-weight: 200; letter-spacing: -0.035em; font-style: normal; }
+  .display em { font-style: normal; }
+  @media (max-width: 720px) { .nav ul li:not(:first-child):not(:last-child) { display: none; } .nav ul { gap: 1.25rem; } }
 </style>
 </head>
 <body>
@@ -577,13 +585,13 @@
 
 <nav class="nav">
   <div class="mark">
-    <a href="index.html" class="nav-logo">Q. Allard</a>
+    <a href="index.html" class="nav-logo">Quinn Allard</a>
   </div>
   <ul>
-    <li><a href="index.html#services">Work</a></li>
-    <li><a href="index.html#realestate">Real Estate</a></li>
     <li><a href="selects.html">Selects</a></li>
-    <li><a href="#" class="active">Travel</a></li>
+    <li><a href="#" class="active">Atlas</a></li>
+    <li><a href="realestate.html">Commissions</a></li>
+    <li><a href="index.html#about">About</a></li>
     <li><a href="index.html#contact" style="color:var(--amber)">Contact</a></li>
   </ul>
 </nav>
@@ -596,8 +604,7 @@
 
   <div class="overlay">
     <div class="lede">
-      <div class="eyebrow">Travels</div>
-      <h1 class="display"><em>Travel</em><br/>Log.</h1>
+            <h1 class="display">Atlas</h1>
     </div>
 
     <aside class="photo-panel" id="photo-panel">

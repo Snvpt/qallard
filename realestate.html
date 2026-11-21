@@ -14,21 +14,21 @@
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&display=swap" rel="stylesheet" />
   <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
   <style>
     /* ── Reset & Base ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:        #080808;
-      --surface:   #111111;
-      --border:    rgba(255,255,255,0.07);
-      --text:      #e8e2d9;
-      --muted:     #8f887c;
-      --accent:    #c8a96e;
-      --accent-dim:#8a6f3e;
-      --white:     #f5f0e8;
+      --bg:        #161616;
+      --surface:   #202020;
+      --border:    #2b2b2b;
+      --text:      #ececec;
+      --muted:     #8e8e8e;
+      --accent:    #ececec;
+      --accent-dim:#8e8e8e;
+      --white:     #ececec;
       --radius:    2.5rem;
       --ease-out:  cubic-bezier(0.16, 1, 0.3, 1);
     }
@@ -38,7 +38,7 @@
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: 'Space Grotesk', sans-serif;
+      font-family: 'Archivo', sans-serif;
       font-weight: 300;
       line-height: 1.6;
       overflow-x: hidden;
@@ -57,8 +57,8 @@
     }
 
     /* ── Typography ── */
-    .serif { font-family: 'Playfair Display', serif; }
-    h1, h2, h3 { font-family: 'Playfair Display', serif; font-weight: 400; }
+    .serif { font-family: 'Archivo', sans-serif; }
+    h1, h2, h3 { font-family: 'Archivo', sans-serif; font-weight: 400; }
 
     /* ── Nav ── */
     nav {
@@ -75,12 +75,12 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(to bottom, rgba(8,8,8,0.9) 0%, transparent 100%);
+      background: linear-gradient(to bottom, rgba(22,22,22,0.9) 0%, transparent 100%);
       pointer-events: none;
     }
 
     .nav-logo {
-      font-family: 'Playfair Display', serif;
+      font-family: 'Archivo', sans-serif;
       font-size: 1.1rem;
       letter-spacing: 0.08em;
       color: var(--white);
@@ -140,7 +140,7 @@
       position: fixed;
       inset: 0;
       z-index: 200;
-      background: rgba(8,8,8,0.9);
+      background: rgba(22,22,22,0.9);
       backdrop-filter: blur(24px) saturate(160%);
       -webkit-backdrop-filter: blur(24px) saturate(160%);
       display: flex;
@@ -154,7 +154,7 @@
     }
     .mobile-menu.open { opacity: 1; visibility: visible; }
     .mobile-menu a {
-      font-family: 'Playfair Display', serif;
+      font-family: 'Archivo', sans-serif;
       font-size: 2rem;
       color: var(--white);
       text-decoration: none;
@@ -302,8 +302,8 @@
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(ellipse 80% 60% at 50% 40%, rgba(200,169,110,0.06) 0%, transparent 70%),
-        radial-gradient(ellipse 60% 80% at 20% 80%, rgba(200,169,110,0.03) 0%, transparent 60%);
+        radial-gradient(ellipse 80% 60% at 50% 40%, rgba(255,255,255,0.06) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 80% at 20% 80%, rgba(255,255,255,0.03) 0%, transparent 60%);
       pointer-events: none;
     }
 
@@ -345,7 +345,7 @@
     }
 
     .hero-subtitle {
-      font-family: 'Space Grotesk', sans-serif;
+      font-family: 'Archivo', sans-serif;
       font-size: clamp(1rem, 2vw, 1.3rem);
       color: rgba(232,226,217,0.45);
       font-style: italic;
@@ -376,7 +376,7 @@
     .hero-rule {
       width: 1px;
       height: 5rem;
-      background: linear-gradient(to bottom, transparent, rgba(200,169,110,0.4), transparent);
+      background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.4), transparent);
       margin: 3.5rem auto 0;
       position: relative;
     }
@@ -443,9 +443,9 @@
     }
 
     .listing-card:hover {
-      border-color: rgba(200,169,110,0.25);
+      border-color: rgba(255,255,255,0.25);
       transform: translateY(-6px);
-      box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(200,169,110,0.08);
+      box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08);
     }
 
     .listing-cover-wrap {
@@ -475,8 +475,8 @@
       inset: 0;
       background: linear-gradient(
         to top,
-        rgba(8,8,8,0.88) 0%,
-        rgba(8,8,8,0.3) 40%,
+        rgba(22,22,22,0.88) 0%,
+        rgba(22,22,22,0.3) 40%,
         transparent 65%
       );
       z-index: 1;
@@ -489,7 +489,7 @@
       top: 1.25rem;
       right: 1.25rem;
       z-index: 3;
-      background: rgba(8,8,8,0.55);
+      background: rgba(22,22,22,0.55);
       border: 1px solid rgba(255,255,255,0.1);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
@@ -534,7 +534,7 @@
     }
 
     .listing-name {
-      font-family: 'Playfair Display', serif;
+      font-family: 'Archivo', sans-serif;
       font-size: 1.8rem;
       color: var(--white);
       line-height: 1.1;
@@ -547,8 +547,8 @@
       bottom: 2rem;
       right: 2rem;
       z-index: 3;
-      background: rgba(200,169,110,0.15);
-      border: 1px solid rgba(200,169,110,0.45);
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.45);
       color: var(--accent);
       font-size: 0.75rem;
       letter-spacing: 0.1em;
@@ -573,7 +573,7 @@
     }
 
     .listing-cta:hover {
-      background: rgba(200,169,110,0.28) !important;
+      background: rgba(255,255,255,0.28) !important;
     }
 
     .listing-cta .arrow {
@@ -704,7 +704,7 @@
       height: 3rem;
       border-radius: 50%;
       border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(8,8,8,0.6);
+      background: rgba(22,22,22,0.6);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       color: var(--white);
@@ -718,8 +718,8 @@
     }
 
     .lightbox-arrow:hover {
-      background: rgba(200,169,110,0.18);
-      border-color: rgba(200,169,110,0.4);
+      background: rgba(255,255,255,0.18);
+      border-color: rgba(255,255,255,0.4);
       transform: translateY(-50%) scale(1.1);
     }
 
@@ -855,7 +855,7 @@
       flex-direction: column;
       justify-content: flex-end;
       padding: 4rem 5rem;
-      background: linear-gradient(to top, rgba(8,8,8,0.85) 0%, transparent 55%);
+      background: linear-gradient(to top, rgba(22,22,22,0.85) 0%, transparent 55%);
       pointer-events: none;
     }
     .hero3d-tag {
@@ -864,10 +864,10 @@
       text-transform: uppercase;
       color: #c8a96e;
       margin-bottom: 1rem;
-      font-family: 'Space Grotesk', sans-serif;
+      font-family: 'Archivo', sans-serif;
     }
     .hero3d-title {
-      font-family: 'Playfair Display', serif;
+      font-family: 'Archivo', sans-serif;
       font-size: clamp(2.8rem, 5vw, 5rem);
       font-weight: 400;
       line-height: 1.0;
@@ -881,7 +881,7 @@
       letter-spacing: 0.18em;
       text-transform: uppercase;
       color: rgba(232,226,217,0.4);
-      font-family: 'Space Grotesk', sans-serif;
+      font-family: 'Archivo', sans-serif;
     }
 
     /* ── Responsive ── */
@@ -925,6 +925,17 @@
       .lightbox-thumbs { display: none; }
       .lightbox-stage { padding: 4rem 3rem; }
     }
+      /* ── Site refresh: shared system with the home page ── */
+    body { font-family: 'Archivo', system-ui, sans-serif; font-weight: 400; }
+    h1, h2, h3, .mobile-menu a { font-stretch: 125%; font-weight: 200; letter-spacing: -0.03em; font-style: normal; }
+    h1 em, h2 em, h3 em { font-style: normal; color: inherit; }
+    .nav-logo { font-stretch: 100%; font-weight: 500; letter-spacing: -0.01em; font-size: 1rem; }
+    .nav-links a, .filter-btn { text-transform: none; letter-spacing: 0; font-size: 0.95rem; }
+    .nav-links a.active { color: var(--white); }
+    .hero3d-meta, .listings-count { text-transform: none; letter-spacing: 0; font-size: 0.95rem; }
+    .hero3d-overlay { padding: 4rem var(--gutter, 3rem) clamp(1.5rem, 4vw, 3rem); }
+    .hero3d-title { font-size: clamp(2.4rem, 9.5vw, 8rem); line-height: 0.95; letter-spacing: -0.035em; color: var(--white); }
+    .hero3d-meta { color: rgba(236,236,236,0.7); }
   </style>
 </head>
 <body>
@@ -941,12 +952,12 @@
 
   <!-- Nav -->
   <nav id="nav">
-    <a href="index.html" class="nav-logo serif">Q. Allard</a>
+    <a href="index.html" class="nav-logo">Quinn Allard</a>
     <ul class="nav-links">
-      <li><a href="index.html#services">Work</a></li>
-      <li><a href="realestate.html" class="active">Real Estate</a></li>
       <li><a href="selects.html">Selects</a></li>
-      <li><a href="travel.html">Travel</a></li>
+      <li><a href="travel.html">Atlas</a></li>
+      <li><a href="realestate.html" class="active">Commissions</a></li>
+      <li><a href="index.html#about">About</a></li>
       <li><a href="index.html#contact" class="nav-cta">Contact</a></li>
     </ul>
     <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
@@ -956,20 +967,19 @@
 
   <!-- Mobile menu overlay -->
   <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
-    <a href="index.html#services">Work</a>
-    <a href="realestate.html">Real Estate</a>
     <a href="selects.html">Selects</a>
-    <a href="travel.html">Travel</a>
+    <a href="travel.html">Atlas</a>
+    <a href="realestate.html">Commissions</a>
+    <a href="index.html#about">About</a>
     <a href="index.html#contact" class="mobile-cta">Contact</a>
   </div>
 
   <!-- 3D Hero -->
   <section class="hero3d" id="hero3d">
-    <img class="hero3d-img" src="ChatGPT Image Apr 24, 2026, 10_55_31 AM.png" alt="Luxury coastal real estate at dusk" />
+    <img class="hero3d-img" src="Hero Header/hero-interior.jpg" alt="Coastal living room with a panoramic ocean view" />
     <div class="hero3d-overlay">
-      <div class="hero3d-tag">Quinn Allard · Photography</div>
-      <h1 class="hero3d-title">Real Estate<br><em>Photography.</em></h1>
-      <div class="hero3d-meta">5 Listings &nbsp;·&nbsp; Santa Cruz County, CA &nbsp;·&nbsp; 2026</div>
+      <h1 class="hero3d-title">Commissions</h1>
+      <div class="hero3d-meta">Real estate and aerials, Santa Cruz County</div>
     </div>
   </section>
 
@@ -977,10 +987,9 @@
   <section class="listings-section">
     <div class="listings-header">
       <div>
-        <div class="section-tag reveal">Portfolio</div>
-        <h2 class="section-title reveal reveal-delay-1">All Listings</h2>
+        <h2 class="section-title reveal reveal-delay-1">Listings</h2>
       </div>
-      <span class="listings-count reveal reveal-delay-2">Seascape Resort · Santa Cruz County, CA</span>
+      <span class="listings-count reveal reveal-delay-2">Seascape Resort, Santa Cruz County</span>
     </div>
 
     <div class="listings-grid" id="listingsGrid">
